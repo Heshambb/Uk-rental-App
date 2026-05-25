@@ -1,0 +1,2361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0B3D2E" />
+<title>Credentia — Rental Trust, Verified</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F4F1EA;
+    --surface: #FFFFFF;
+    --surface-2: #FBF8F2;
+    --ink: #0F1A14;
+    --ink-soft: #4A5751;
+    --ink-mute: #8A938E;
+    --line: #E4DED1;
+    --brand: #0B3D2E;
+    --brand-2: #14583F;
+    --accent: #D97A3C;
+    --good: #2E7D5B;
+    --warn: #C9892E;
+    --bad: #B4452B;
+    --shadow-sm: 0 1px 2px rgba(15,26,20,.04), 0 2px 6px rgba(15,26,20,.04);
+    --shadow-md: 0 6px 20px rgba(15,26,20,.08), 0 2px 6px rgba(15,26,20,.04);
+    --shadow-lg: 0 24px 60px rgba(15,26,20,.18);
+    --r-sm: 10px;
+    --r-md: 14px;
+    --r-lg: 20px;
+    --display: 'Fraunces', 'Times New Roman', serif;
+    --body: 'Inter Tight', system-ui, -apple-system, sans-serif;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    font-family: var(--body);
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  body::before {
+    content:""; position: fixed; inset: 0; pointer-events: none;
+    background-image: radial-gradient(circle at 1px 1px, rgba(15,26,20,.025) 1px, transparent 0);
+    background-size: 3px 3px;
+    z-index: 1;
+  }
+  .app { position: relative; min-height: 100vh; z-index: 2; }
+
+  /* ---------- Topbar ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(244,241,234,.88);
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar-inner {
+    max-width: 1180px; margin: 0 auto;
+    padding: 14px 22px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
+  .brand-mark {
+    width: 30px; height: 30px; border-radius: 9px;
+    background: var(--brand); color: #fff;
+    display: grid; place-items: center;
+    font-family: var(--display); font-weight: 700; font-size: 17px;
+    box-shadow: var(--shadow-sm);
+  }
+  .brand-name { font-family: var(--display); font-weight: 600; font-size: 21px; letter-spacing: -.01em; }
+  .brand-name em { font-style: italic; color: var(--accent); font-weight: 600; }
+  .role-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 11px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--line);
+    font-size: 12px; font-weight: 500; color: var(--ink-soft);
+  }
+  .role-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--good); }
+  .top-actions { display: flex; gap: 8px; align-items: center; }
+  .icon-btn {
+    width: 36px; height: 36px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--surface);
+    display: grid; place-items: center; cursor: pointer;
+    color: var(--ink-soft);
+    transition: all .15s ease;
+  }
+  .icon-btn:hover { color: var(--ink); border-color: var(--ink-mute); }
+
+  /* ---------- Tabs ---------- */
+  .tabs {
+    display: flex; gap: 4px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 24px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .tab {
+    padding: 12px 16px; background: transparent; border: 0;
+    font-family: var(--body); font-size: 14px; font-weight: 500;
+    color: var(--ink-soft); cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    white-space: nowrap;
+    transition: all .15s ease;
+  }
+  .tab.active { color: var(--brand); border-bottom-color: var(--brand); font-weight: 600; }
+  .tab:hover:not(.active) { color: var(--ink); }
+  .tab .badge {
+    display: inline-block; margin-left: 6px;
+    background: var(--accent); color: #fff;
+    font-size: 10px; font-weight: 700;
+    padding: 1px 6px; border-radius: 999px;
+    min-width: 17px; text-align: center;
+  }
+
+  main { max-width: 1180px; margin: 0 auto; padding: 22px 22px 100px; }
+
+  /* ---------- Launcher ---------- */
+  .launcher {
+    min-height: calc(100vh - 70px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px 22px;
+    position: relative;
+  }
+  .launcher-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+  .launcher-bg::before, .launcher-bg::after {
+    content: ""; position: absolute; border-radius: 50%;
+    filter: blur(80px); opacity: .35;
+  }
+  .launcher-bg::before { width: 460px; height: 460px; background: var(--brand); top: -120px; left: -120px; }
+  .launcher-bg::after { width: 380px; height: 380px; background: var(--accent); bottom: -100px; right: -80px; opacity: .22; }
+  .launcher-card { max-width: 820px; width: 100%; position: relative; text-align: center; }
+  .eyebrow {
+    display: inline-flex; gap: 8px; align-items: center;
+    padding: 6px 12px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--line);
+    font-size: 12px; font-weight: 500; color: var(--ink-soft);
+    letter-spacing: .02em; text-transform: uppercase;
+    box-shadow: var(--shadow-sm);
+  }
+  .eyebrow .ping {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+    box-shadow: 0 0 0 0 rgba(217,122,60,.6);
+    animation: ping 1.8s ease-out infinite;
+  }
+  @keyframes ping {
+    0% { box-shadow: 0 0 0 0 rgba(217,122,60,.6); }
+    100% { box-shadow: 0 0 0 14px rgba(217,122,60,0); }
+  }
+  h1.hero {
+    font-family: var(--display); font-weight: 600;
+    font-size: clamp(40px, 7vw, 72px);
+    line-height: 1.02; letter-spacing: -.025em;
+    margin: 22px 0 14px;
+  }
+  h1.hero em { font-style: italic; color: var(--accent); }
+  .hero-sub { font-size: 17px; color: var(--ink-soft); max-width: 540px; margin: 0 auto 36px; }
+  .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 680px; margin: 0 auto; }
+  @media (max-width: 600px) { .role-grid { grid-template-columns: 1fr; } }
+  .role-card {
+    text-align: left; padding: 28px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    cursor: pointer;
+    transition: all .25s cubic-bezier(.2,.7,.2,1);
+    box-shadow: var(--shadow-sm);
+    position: relative; overflow: hidden;
+  }
+  .role-card:hover { transform: translateY(-3px); border-color: var(--brand); box-shadow: var(--shadow-md); }
+  .role-card .role-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: grid; place-items: center;
+    margin-bottom: 18px;
+  }
+  .role-card.tenant .role-icon { background: rgba(217,122,60,.12); color: var(--accent); }
+  .role-card.landlord .role-icon { background: rgba(11,61,46,.1); color: var(--brand); }
+  .role-card h3 { font-family: var(--display); font-size: 24px; font-weight: 600; margin: 0 0 6px; letter-spacing: -.01em; }
+  .role-card p { margin: 0 0 18px; color: var(--ink-soft); font-size: 14px; }
+  .role-card .role-cta { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 14px; color: var(--brand); }
+  .role-card:hover .role-cta { gap: 10px; }
+  .footer-note { margin-top: 40px; font-size: 12px; color: var(--ink-mute); }
+
+  /* ---------- Buttons & Cards ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 11px 18px; border-radius: 10px;
+    font-family: var(--body); font-weight: 600; font-size: 14px;
+    border: 1px solid transparent;
+    cursor: pointer; transition: all .15s ease;
+    text-decoration: none;
+  }
+  .btn-primary { background: var(--brand); color: #fff; }
+  .btn-primary:hover { background: var(--brand-2); }
+  .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+  .btn-ghost:hover { background: var(--surface); border-color: var(--ink-mute); }
+  .btn-accent { background: var(--accent); color: #fff; }
+  .btn-accent:hover { filter: brightness(.95); }
+  .btn-danger-ghost { background: transparent; color: var(--bad); border-color: rgba(180,69,43,.3); }
+  .btn-danger-ghost:hover { background: rgba(180,69,43,.06); }
+  .btn:disabled { opacity: .6; cursor: not-allowed; }
+  .btn-sm { padding: 7px 12px; font-size: 13px; }
+  .btn-block { width: 100%; }
+
+  .page-head { margin-bottom: 22px; display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+  .page-head h2 { font-family: var(--display); font-weight: 600; font-size: 30px; letter-spacing: -.02em; margin: 0 0 4px; }
+  .page-head p { color: var(--ink-soft); margin: 0; font-size: 14px; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--r-lg); padding: 22px;
+    box-shadow: var(--shadow-sm);
+  }
+  .card + .card { margin-top: 14px; }
+
+  h4.section { font-family: var(--display); font-size: 18px; font-weight: 600; margin: 0 0 12px; letter-spacing: -.01em; }
+  .section-sub { color: var(--ink-mute); font-size: 12px; margin: 0 0 14px; }
+
+  /* ---------- Form ---------- */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { font-size: 12px; font-weight: 600; color: var(--ink-soft); letter-spacing: .02em; text-transform: uppercase; }
+  .field input, .field select, .field textarea {
+    font-family: var(--body); font-size: 15px;
+    padding: 11px 13px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--surface-2);
+    color: var(--ink); transition: all .15s ease;
+    outline: none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--brand); background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(11,61,46,.08);
+  }
+  .field-hint { font-size: 12px; color: var(--ink-mute); }
+  .form-actions { margin-top: 22px; display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+
+  /* ---------- Avatar ---------- */
+  .avatar {
+    width: 46px; height: 46px; border-radius: 50%;
+    display: grid; place-items: center;
+    font-family: var(--display); font-weight: 600; font-size: 17px;
+    color: #fff; flex-shrink: 0;
+  }
+  .avatar.sm { width: 36px; height: 36px; font-size: 14px; }
+  .avatar.lg { width: 64px; height: 64px; font-size: 22px; }
+
+  /* ---------- My profiles (tenant side) ---------- */
+  .my-profile-row {
+    display: flex; gap: 14px; align-items: center;
+    padding: 14px; background: var(--surface-2);
+    border: 1px solid var(--line); border-radius: 12px;
+    margin-bottom: 8px;
+  }
+  .my-profile-row:last-child { margin-bottom: 0; }
+  .my-profile-row .info { flex: 1; min-width: 0; }
+  .my-profile-row .name { font-weight: 600; font-size: 15px; }
+  .my-profile-row .sub { font-size: 12px; color: var(--ink-mute); margin-top: 2px; }
+  .my-profile-row .actions { display: flex; gap: 6px; align-items: center; }
+  .my-profile-row .score-mini {
+    text-align: right; padding-right: 10px;
+    border-right: 1px solid var(--line); margin-right: 4px;
+  }
+  .my-profile-row .score-mini .v { font-family: var(--display); font-weight: 600; font-size: 18px; line-height: 1; }
+  .my-profile-row .score-mini .l { font-size: 10px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: .04em; }
+
+  .empty-state {
+    text-align: center; padding: 36px 20px;
+    border: 2px dashed var(--line); border-radius: 14px;
+    color: var(--ink-mute);
+  }
+  .empty-state h4 { font-family: var(--display); font-size: 18px; color: var(--ink); margin: 6px 0 4px; font-weight: 600; }
+
+  /* ---------- Search ---------- */
+  .filter-row { display: flex; gap: 10px; align-items: center; margin-bottom: 18px; flex-wrap: wrap; }
+  .search-box {
+    flex: 1; min-width: 220px;
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px; background: var(--surface);
+    border: 1px solid var(--line); border-radius: 10px;
+  }
+  .search-box input {
+    border: 0; outline: 0; background: transparent;
+    flex: 1; font-family: var(--body); font-size: 15px;
+    color: var(--ink);
+  }
+
+  /* ---------- Tenant directory cards (landlord side) ---------- */
+  .tenant-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+  .tenant-card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--r-lg); padding: 18px;
+    cursor: pointer; transition: all .2s ease;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+  }
+  .tenant-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--ink-mute); }
+  .tenant-card.new::after {
+    content: "NEW"; position: absolute; top: 14px; right: 14px;
+    background: var(--accent); color: #fff;
+    padding: 2px 8px; border-radius: 999px;
+    font-size: 10px; font-weight: 700; letter-spacing: .05em;
+  }
+  .tenant-top { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; }
+  .tenant-name { font-family: var(--display); font-size: 18px; font-weight: 600; letter-spacing: -.01em; line-height: 1.2; }
+  .tenant-meta { font-size: 12px; color: var(--ink-mute); margin-top: 2px; }
+
+  .credit-status {
+    padding: 12px; background: var(--surface-2);
+    border-radius: 12px; margin-bottom: 12px;
+    display: flex; justify-content: space-between; align-items: center;
+    min-height: 56px;
+  }
+  .credit-status.locked { background: var(--surface-2); border: 1px dashed var(--line); }
+  .credit-status.locked .label { font-size: 12px; color: var(--ink-mute); display: flex; align-items: center; gap: 6px; }
+  .credit-status .score-label { font-size: 11px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: .04em; }
+  .credit-status .score-value { font-family: var(--display); font-weight: 600; font-size: 26px; line-height: 1; letter-spacing: -.02em; }
+  .score-tag { padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .score-tag.excellent { background: rgba(46,125,91,.12); color: var(--good); }
+  .score-tag.good { background: rgba(46,125,91,.10); color: var(--good); }
+  .score-tag.fair { background: rgba(201,137,46,.12); color: var(--warn); }
+  .score-tag.poor { background: rgba(180,69,43,.12); color: var(--bad); }
+  .tenant-facts { display: flex; gap: 12px; font-size: 12px; color: var(--ink-soft); flex-wrap: wrap; }
+
+  /* ---------- Property cards (marketplace) ---------- */
+  .property-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
+  .property-card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--r-lg); overflow: hidden;
+    cursor: pointer; transition: all .2s ease;
+    box-shadow: var(--shadow-sm);
+    display: flex; flex-direction: column;
+  }
+  .property-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .property-photo {
+    aspect-ratio: 4 / 3; position: relative;
+    background: var(--surface-2); overflow: hidden;
+  }
+  .property-photo img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block;
+    transition: transform .35s ease;
+  }
+  .property-card:hover .property-photo img { transform: scale(1.04); }
+  .property-photo .qualify-badge {
+    position: absolute; top: 12px; left: 12px;
+    padding: 4px 10px; border-radius: 999px;
+    background: rgba(255,255,255,.95);
+    backdrop-filter: blur(6px);
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; gap: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  }
+  .qualify-badge.qualifies { color: var(--good); }
+  .qualify-badge.does-not { color: var(--bad); }
+  .qualify-badge.unknown { color: var(--ink-soft); }
+  .property-photo .ll-rating {
+    position: absolute; top: 12px; right: 12px;
+    padding: 4px 10px; border-radius: 999px;
+    background: rgba(15,26,20,.78);
+    color: #fff; font-size: 11px; font-weight: 600;
+    display: flex; align-items: center; gap: 4px;
+    backdrop-filter: blur(4px);
+  }
+  .property-body { padding: 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .property-rent { font-family: var(--display); font-size: 20px; font-weight: 600; letter-spacing: -.01em; line-height: 1; }
+  .property-rent .unit { font-size: 12px; color: var(--ink-mute); font-weight: 400; margin-left: 2px; }
+  .property-addr { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .property-meta { font-size: 12px; color: var(--ink-mute); }
+  .property-foot {
+    margin-top: 8px; padding-top: 10px; border-top: 1px dashed var(--line);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px; color: var(--ink-soft);
+  }
+  .property-foot .min-score { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
+  .property-foot .min-score .lock { color: var(--ink-mute); }
+
+  .property-card.applied .applied-tag {
+    position: absolute; bottom: 12px; right: 12px;
+    background: var(--brand); color: #fff;
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 700;
+  }
+
+  /* ---------- Property detail ---------- */
+  .property-hero {
+    position: relative; aspect-ratio: 16 / 7;
+    background: var(--surface-2); border-radius: var(--r-lg); overflow: hidden;
+    margin-bottom: 18px;
+  }
+  .property-hero img { width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 600px) { .property-hero { aspect-ratio: 4 / 3; } }
+
+  .detail-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; }
+  @media (max-width: 880px) { .detail-grid { grid-template-columns: 1fr; } }
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 11px; border-radius: 8px;
+    background: transparent; border: 1px solid var(--line);
+    color: var(--ink-soft); cursor: pointer;
+    font-size: 13px; font-weight: 500;
+    margin-bottom: 14px;
+  }
+  .back-btn:hover { background: var(--surface); color: var(--ink); }
+
+  .qualification-banner {
+    padding: 14px 18px; border-radius: 12px;
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 14px;
+    font-size: 14px;
+  }
+  .qualification-banner.qualifies { background: rgba(46,125,91,.1); border: 1px solid rgba(46,125,91,.25); color: var(--good); }
+  .qualification-banner.does-not { background: rgba(180,69,43,.08); border: 1px solid rgba(180,69,43,.2); color: var(--bad); }
+  .qualification-banner.unknown { background: rgba(201,137,46,.08); border: 1px solid rgba(201,137,46,.2); color: var(--warn); }
+  .qualification-banner b { font-weight: 700; }
+
+  .landlord-strip {
+    display: flex; gap: 12px; align-items: center;
+    padding: 14px; background: var(--surface-2);
+    border-radius: 12px;
+    cursor: pointer; transition: all .15s ease;
+    border: 1px solid var(--line);
+  }
+  .landlord-strip:hover { background: var(--surface); border-color: var(--ink-mute); }
+  .landlord-strip .info { flex: 1; min-width: 0; }
+  .landlord-strip .name { font-weight: 600; font-size: 14px; }
+  .landlord-strip .sub { font-size: 12px; color: var(--ink-mute); margin-top: 2px; display: flex; align-items: center; gap: 4px; }
+  .star-rating { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; color: var(--accent); }
+
+  /* ---------- Tenant detail (existing) ---------- */
+  .profile-head { display: flex; gap: 16px; align-items: center; margin-bottom: 18px; }
+  .profile-head .avatar { width: 64px; height: 64px; font-size: 22px; }
+  .profile-head h3 { font-family: var(--display); font-size: 26px; font-weight: 600; margin: 0 0 2px; letter-spacing: -.01em; }
+  .profile-head .meta { color: var(--ink-soft); font-size: 14px; }
+
+  .data-list { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; }
+  @media (max-width: 480px) { .data-list { grid-template-columns: 1fr; } }
+  .data-list dt { font-size: 11px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 2px; }
+  .data-list dd { margin: 0; font-size: 14px; color: var(--ink); font-weight: 500; }
+  .ssn-mask { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+  /* Credit fetch */
+  .credit-panel { text-align: center; }
+  .credit-panel .icon-wrap {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: rgba(11,61,46,.08); color: var(--brand);
+    display: grid; place-items: center; margin: 0 auto 14px;
+  }
+  .credit-panel h4 { font-family: var(--display); font-size: 20px; font-weight: 600; margin: 0 0 6px; letter-spacing: -.01em; }
+  .credit-panel p.sub { color: var(--ink-soft); font-size: 13px; margin: 0 0 18px; }
+
+  .fetch-stages { font-size: 13px; color: var(--ink-soft); margin: 14px 0; min-height: 60px; }
+  .fetch-stage { display: flex; align-items: center; gap: 8px; padding: 6px 0; opacity: .4; transition: opacity .25s; }
+  .fetch-stage.active { opacity: 1; }
+  .fetch-stage.done { opacity: 1; color: var(--good); }
+  .fetch-stage .stage-icon { width: 18px; height: 18px; display: grid; place-items: center; flex-shrink: 0; }
+  .spinner {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid var(--line); border-top-color: var(--brand);
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .credit-gauge { position: relative; height: 180px; display: grid; place-items: center; margin: 8px 0 14px; animation: fadeIn .4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: none; } }
+  .credit-gauge svg { width: 220px; height: 130px; }
+  .credit-gauge .number { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); text-align: center; }
+  .credit-gauge .number .num { font-family: var(--display); font-weight: 600; font-size: 44px; line-height: 1; letter-spacing: -.02em; }
+  .credit-gauge .number .lab { font-size: 12px; color: var(--ink-mute); margin-top: 2px; text-transform: uppercase; letter-spacing: .06em; }
+
+  .history-list { display: flex; flex-direction: column; gap: 8px; }
+  .history-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 12px; border-radius: 10px;
+    background: var(--surface-2); border: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .history-item .left { display: flex; align-items: center; gap: 10px; }
+  .history-item .left .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .history-item.paid .left .dot { background: var(--good); }
+  .history-item.late .left .dot { background: var(--warn); }
+  .history-item.miss .left .dot { background: var(--bad); }
+  .history-item .right { color: var(--ink-mute); font-size: 12px; }
+
+  .stat-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--line); font-size: 14px; }
+  .stat-row:last-child { border-bottom: 0; }
+  .stat-row .k { color: var(--ink-soft); }
+  .stat-row .v { font-weight: 600; }
+
+  .detail-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+
+  /* ---------- Applicants list (landlord) ---------- */
+  .applicant-row {
+    display: flex; gap: 14px; align-items: center;
+    padding: 14px; background: var(--surface-2);
+    border: 1px solid var(--line); border-radius: 12px;
+    margin-bottom: 8px;
+    cursor: pointer; transition: all .15s ease;
+  }
+  .applicant-row:hover { background: var(--surface); border-color: var(--ink-mute); }
+  .applicant-row .info { flex: 1; min-width: 0; }
+  .applicant-row .name { font-weight: 600; font-size: 15px; }
+  .applicant-row .sub { font-size: 12px; color: var(--ink-mute); margin-top: 2px; }
+  .applicant-row .score-block { text-align: right; }
+  .applicant-row .score-block .v { font-family: var(--display); font-weight: 600; font-size: 22px; line-height: 1; }
+  .applicant-row .score-block .l { font-size: 10px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: .04em; margin-top: 2px; }
+  .applicant-row.qualifies { border-left: 3px solid var(--good); }
+  .applicant-row.does-not { border-left: 3px solid var(--bad); }
+  .applicant-row.locked-score { border-left: 3px solid var(--ink-mute); }
+
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 9px; border-radius: 999px;
+    font-size: 11px; font-weight: 600;
+  }
+  .status-pill.pending { background: rgba(201,137,46,.12); color: var(--warn); }
+  .status-pill.accepted { background: rgba(46,125,91,.12); color: var(--good); }
+  .status-pill.rejected { background: rgba(180,69,43,.12); color: var(--bad); }
+
+  /* ---------- Chat ---------- */
+  .chat-page {
+    display: grid; grid-template-columns: 280px 1fr;
+    gap: 16px; height: calc(100vh - 200px); min-height: 540px;
+  }
+  @media (max-width: 760px) {
+    .chat-page { grid-template-columns: 1fr; height: auto; }
+    .chat-sidebar { display: none; }
+  }
+  .chat-sidebar {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--r-lg); padding: 14px;
+    overflow-y: auto;
+  }
+  .chat-sidebar h4 { font-family: var(--display); font-size: 16px; margin: 4px 8px 12px; font-weight: 600; }
+  .chat-thread { display: flex; gap: 10px; padding: 10px; border-radius: 12px; cursor: pointer; transition: background .15s ease; }
+  .chat-thread:hover, .chat-thread.active { background: var(--surface-2); }
+  .chat-thread .info { flex: 1; min-width: 0; }
+  .chat-thread .name { font-weight: 600; font-size: 14px; }
+  .chat-thread .preview { font-size: 12px; color: var(--ink-mute); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .chat-main {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--r-lg); display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .chat-head { padding: 14px 18px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 12px; }
+  .chat-head .avatar { width: 40px; height: 40px; font-size: 14px; }
+  .chat-head .name { font-family: var(--display); font-size: 17px; font-weight: 600; }
+  .chat-head .status { font-size: 12px; color: var(--good); display: flex; align-items: center; gap: 4px; }
+  .chat-head .status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--good); }
+  .chat-body {
+    flex: 1; overflow-y: auto;
+    padding: 18px;
+    display: flex; flex-direction: column; gap: 8px;
+    background:
+      radial-gradient(circle at 100% 0%, rgba(217,122,60,.04), transparent 40%),
+      radial-gradient(circle at 0% 100%, rgba(11,61,46,.04), transparent 40%),
+      var(--surface);
+  }
+  .msg { max-width: 75%; padding: 9px 14px; border-radius: 16px; font-size: 14px; line-height: 1.4; animation: msgIn .25s ease; }
+  @keyframes msgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .msg.them { background: var(--surface-2); color: var(--ink); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--line); }
+  .msg.me { background: var(--brand); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .msg .ts { font-size: 10px; opacity: .6; margin-top: 4px; display: block; }
+  .typing { display: inline-flex; gap: 3px; padding: 12px 14px; background: var(--surface-2); border-radius: 16px; border-bottom-left-radius: 4px; align-self: flex-start; border: 1px solid var(--line); }
+  .typing span { width: 6px; height: 6px; background: var(--ink-mute); border-radius: 50%; animation: tdot 1.2s infinite; }
+  .typing span:nth-child(2) { animation-delay: .15s; }
+  .typing span:nth-child(3) { animation-delay: .3s; }
+  @keyframes tdot { 0%,60%,100% { transform: translateY(0); opacity: .4; } 30% { transform: translateY(-4px); opacity: 1; } }
+  .chat-input { border-top: 1px solid var(--line); padding: 12px; display: flex; gap: 8px; background: var(--surface); }
+  .chat-input input {
+    flex: 1; border: 1px solid var(--line); background: var(--surface-2);
+    border-radius: 999px; padding: 10px 16px;
+    font-family: var(--body); font-size: 14px;
+    outline: none;
+  }
+  .chat-input input:focus { border-color: var(--brand); background: var(--surface); }
+  .chat-input button {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--brand); color: #fff; border: 0; cursor: pointer;
+    display: grid; place-items: center;
+  }
+  .quick-replies { display: flex; gap: 6px; flex-wrap: wrap; padding: 0 12px 10px; }
+  .quick-replies button {
+    font-size: 12px; padding: 6px 10px; border-radius: 999px;
+    background: var(--surface-2); border: 1px solid var(--line);
+    color: var(--ink-soft); cursor: pointer;
+  }
+
+  /* ---------- Feedback ---------- */
+  .fab {
+    position: fixed; bottom: 24px; right: 24px; z-index: 60;
+    background: var(--accent); color: #fff;
+    padding: 13px 18px; border-radius: 999px;
+    font-family: var(--body); font-weight: 600; font-size: 14px;
+    border: 0; cursor: pointer;
+    box-shadow: 0 8px 24px rgba(217,122,60,.4);
+    display: flex; align-items: center; gap: 8px;
+    transition: all .2s ease;
+  }
+  .fab:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(217,122,60,.5); }
+
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(15,26,20,.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center;
+    padding: 18px;
+    animation: fadeIn .2s ease;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--surface); border-radius: var(--r-lg);
+    max-width: 480px; width: 100%;
+    padding: 28px; box-shadow: var(--shadow-lg);
+    animation: slideUp .25s ease;
+    max-height: 90vh; overflow-y: auto;
+  }
+  .modal.wide { max-width: 640px; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+  .modal h3 { font-family: var(--display); font-size: 24px; font-weight: 600; margin: 0 0 6px; letter-spacing: -.01em; }
+  .modal p.intro { color: var(--ink-soft); margin: 0 0 20px; font-size: 14px; }
+  .modal .close {
+    position: absolute; top: 18px; right: 18px;
+    background: none; border: 0; cursor: pointer;
+    color: var(--ink-mute); width: 32px; height: 32px;
+    border-radius: 8px;
+    display: grid; place-items: center;
+  }
+  .modal .close:hover { background: var(--surface-2); color: var(--ink); }
+  .modal-wrap { position: relative; }
+
+  .star-row { display: flex; gap: 4px; margin: 10px 0 18px; }
+  .star { width: 36px; height: 36px; cursor: pointer; color: var(--line); transition: all .15s ease; background: none; border: 0; padding: 0; font-size: 28px; }
+  .star.active, .star:hover { color: var(--accent); transform: scale(1.1); }
+  .star.active ~ .star { color: var(--line); transform: none; }
+  .pill-group { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .pill {
+    padding: 6px 12px; border-radius: 999px;
+    background: var(--surface-2); border: 1px solid var(--line);
+    font-size: 13px; cursor: pointer; transition: all .15s ease;
+  }
+  .pill.selected { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+  /* ---------- Toast ---------- */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--ink); color: #fff;
+    padding: 12px 18px; border-radius: 12px;
+    font-size: 14px; font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    opacity: 0; pointer-events: none;
+    transition: all .25s ease;
+    z-index: 200;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Landlord persona switcher inside topbar */
+  .persona-select {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 6px 10px;
+    font-size: 12px; font-family: var(--body); color: var(--ink-soft);
+    outline: none;
+  }
+
+  /* Account-as-tenant indicator on dashboard banner */
+  .me-banner {
+    display: flex; gap: 14px; align-items: center;
+    padding: 16px; background: var(--surface);
+    border: 1px solid var(--line); border-radius: var(--r-lg);
+    margin-bottom: 18px;
+    box-shadow: var(--shadow-sm);
+  }
+  .me-banner .info { flex: 1; min-width: 0; }
+  .me-banner .greeting { font-family: var(--display); font-size: 20px; font-weight: 600; }
+  .me-banner .me-score { text-align: right; }
+  .me-banner .me-score .v { font-family: var(--display); font-weight: 600; font-size: 24px; line-height: 1; }
+  .me-banner .me-score .l { font-size: 10px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: .04em; margin-top: 2px; }
+
+  /* Photo gallery for property detail */
+  .photo-thumbs { display: flex; gap: 8px; margin-top: 8px; overflow-x: auto; padding-bottom: 4px; }
+  .photo-thumbs img {
+    width: 80px; height: 80px; object-fit: cover;
+    border-radius: 8px; cursor: pointer;
+    opacity: .65; transition: all .15s ease;
+    border: 2px solid transparent;
+  }
+  .photo-thumbs img.active { opacity: 1; border-color: var(--brand); }
+  .photo-thumbs img:hover { opacity: 1; }
+
+  .empty { text-align: center; padding: 60px 20px; color: var(--ink-mute); }
+  .empty h3 { font-family: var(--display); color: var(--ink); margin: 8px 0 4px; }
+  .hidden { display: none !important; }
+  .screen { animation: enter .35s cubic-bezier(.2,.7,.2,1); }
+  @keyframes enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <header class="topbar hidden" id="topbar">
+    <div class="topbar-inner">
+      <div class="brand" onclick="goHome()">
+        <div class="brand-mark">C</div>
+        <div class="brand-name">Credenti<em>a</em></div>
+      </div>
+      <div class="top-actions">
+        <span id="topbarExtra"></span>
+        <span class="role-pill" id="rolePill"><span class="dot"></span><span id="roleLabel">Tenant</span></span>
+        <button class="icon-btn" title="Switch role" onclick="goHome()" aria-label="Switch role">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main"></main>
+
+  <button class="fab hidden" id="fab" onclick="openFeedback()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Feedback
+  </button>
+
+  <!-- Feedback modal -->
+  <div class="modal-overlay" id="feedbackModal" onclick="if(event.target===this) closeFeedback()">
+    <div class="modal">
+      <div class="modal-wrap">
+        <button class="close" onclick="closeFeedback()" aria-label="Close">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+        <h3>How's the demo going?</h3>
+        <p class="intro">Your closed-tester feedback shapes what we build next.</p>
+        <label class="field-hint">Overall rating</label>
+        <div class="star-row" id="starRow">
+          <button class="star" data-v="1">★</button><button class="star" data-v="2">★</button>
+          <button class="star" data-v="3">★</button><button class="star" data-v="4">★</button>
+          <button class="star" data-v="5">★</button>
+        </div>
+        <label class="field-hint">What stood out? (pick any)</label>
+        <div class="pill-group" id="pillGroup">
+          <button class="pill" data-tag="Marketplace">Marketplace</button>
+          <button class="pill" data-tag="Credit feature">Credit feature</button>
+          <button class="pill" data-tag="Listings">Listings</button>
+          <button class="pill" data-tag="Applications">Applications</button>
+          <button class="pill" data-tag="Chat">Chat</button>
+          <button class="pill" data-tag="UI/Design">UI / Design</button>
+          <button class="pill" data-tag="Easy to use">Easy to use</button>
+          <button class="pill" data-tag="Confusing">Confusing</button>
+          <button class="pill" data-tag="Missing feature">Missing feature</button>
+        </div>
+        <div class="field full" style="margin-bottom:14px">
+          <label for="fbText">Tell us more (optional)</label>
+          <textarea id="fbText" rows="3" placeholder="What worked, what didn't, what would you add?"></textarea>
+        </div>
+        <div class="field full" style="margin-bottom:14px">
+          <label for="fbEmail">Email (optional — for follow-up)</label>
+          <input type="email" id="fbEmail" placeholder="you@example.com" />
+        </div>
+        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:8px">
+          <button class="btn btn-ghost" onclick="closeFeedback()">Cancel</button>
+          <button class="btn btn-primary" onclick="submitFeedback()" id="fbSubmit">Send feedback</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- New listing modal -->
+  <div class="modal-overlay" id="listingModal" onclick="if(event.target===this) closeListing()">
+    <div class="modal wide">
+      <div class="modal-wrap">
+        <button class="close" onclick="closeListing()" aria-label="Close">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+        <h3>List a new property</h3>
+        <p class="intro">Tenants will see this in the marketplace. Set a minimum credit score so only qualified applicants can apply.</p>
+        <form onsubmit="submitListing(event)">
+          <div class="form-grid">
+            <div class="field full">
+              <label for="l-addr">Address</label>
+              <input id="l-addr" name="address" required placeholder="123 Maple Street" />
+            </div>
+            <div class="field">
+              <label for="l-city">City</label>
+              <input id="l-city" name="city" required placeholder="Lahore, PK" />
+            </div>
+            <div class="field">
+              <label for="l-type">Property type</label>
+              <select id="l-type" name="propertyType">
+                <option>Apartment</option><option>House</option><option>Studio</option><option>Room</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="l-rent">Monthly rent ($)</label>
+              <input id="l-rent" name="rent" type="number" min="0" required placeholder="1200" />
+            </div>
+            <div class="field">
+              <label for="l-beds">Bedrooms</label>
+              <input id="l-beds" name="bedrooms" type="number" min="0" max="10" required value="2" />
+            </div>
+            <div class="field">
+              <label for="l-min">Minimum credit score</label>
+              <input id="l-min" name="minScore" type="number" min="300" max="850" required value="650" />
+              <span class="field-hint">Tenants below this score won't qualify</span>
+            </div>
+            <div class="field">
+              <label for="l-photo">Photo style</label>
+              <select id="l-photo" name="photoTag">
+                <option value="apartment">Apartment</option>
+                <option value="house">House</option>
+                <option value="studio">Studio</option>
+                <option value="room">Room</option>
+                <option value="kitchen">Kitchen view</option>
+                <option value="bedroom">Bedroom view</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="l-desc">Description</label>
+              <textarea id="l-desc" name="description" rows="2" placeholder="Bright 2-bed apartment near downtown, recently renovated..."></textarea>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-ghost" onclick="closeListing()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Publish listing</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* =========================================================
+   Credentia Demo — Marketplace edition
+   ========================================================= */
+
+/* === CONFIG ============================================== */
+// Paste your Google Apps Script Web App URL here to enable Sheets feedback.
+const FEEDBACK_ENDPOINT = "";
+
+/* === LANDLORD PERSONAS ================================== */
+// A real product would have many landlords; for the demo we seed 3.
+// The user picks one when entering "Landlord view" so the listings/applicants
+// they see are *that landlord's* properties and applicants.
+const LANDLORDS = [
+  { id:'ll_1', name:'Hassan Ali', company:'Ali Properties', avatar:'#0B3D2E', rating:4.8, totalReviews:34,
+    bio:'Manages 12 properties across Lahore. Known for fast repairs.' },
+  { id:'ll_2', name:'Mehreen Tariq', company:'Tariq Estates', avatar:'#D97A3C', rating:4.5, totalReviews:21,
+    bio:'Family-run rentals in Karachi and Islamabad.' },
+  { id:'ll_3', name:'Adeel Sheikh', company:'Sheikh Holdings', avatar:'#14583F', rating:3.9, totalReviews:18,
+    bio:'Portfolio across Punjab. Mixed reviews on responsiveness.' },
+];
+
+/* === SEED TENANTS ======================================== */
+const SEED_TENANTS = [
+  { id:"t1", name:"Aisha Rahman", age:28, occupation:"Software Engineer", employer:"Northwind Labs", income:7800, city:"Lahore, PK",
+    ssn:"***-**-4821", phone:"+92 300 1234567", email:"aisha.r@example.com", creditScore:782, color:"#0B3D2E" },
+  { id:"t2", name:"Daniyal Khan", age:34, occupation:"Marketing Manager", employer:"Bluepine Co.", income:5200, city:"Karachi, PK",
+    ssn:"***-**-1907", phone:"+92 333 9876543", email:"d.khan@example.com", creditScore:712, color:"#D97A3C" },
+  { id:"t3", name:"Sana Iqbal", age:25, occupation:"Graphic Designer", employer:"Self-employed", income:3400, city:"Islamabad, PK",
+    ssn:"***-**-7345", phone:"+92 312 4567890", email:"sana.iqbal@example.com", creditScore:658, color:"#14583F" },
+  { id:"t4", name:"Omar Siddiqui", age:41, occupation:"University Lecturer", employer:"FAST University", income:6100, city:"Lahore, PK",
+    ssn:"***-**-2256", phone:"+92 321 1112233", email:"omar.s@example.com", creditScore:805, color:"#B4452B" },
+  { id:"t5", name:"Hira Malik", age:30, occupation:"Nurse Practitioner", employer:"Shaukat Khanum", income:4800, city:"Lahore, PK",
+    ssn:"***-**-9081", phone:"+92 345 5556677", email:"h.malik@example.com", creditScore:745, color:"#C9892E" },
+  { id:"t6", name:"Bilal Chaudhry", age:38, occupation:"Restaurant Owner", employer:"Self-employed", income:9200, city:"Lahore, PK",
+    ssn:"***-**-3344", phone:"+92 300 7778899", email:"bilal.c@example.com", creditScore:690, color:"#0B3D2E" },
+];
+
+/* === SEED PROPERTIES ===================================== */
+// Unsplash photos with stable IDs. Each property uses photoTag → photo set.
+// Using `images.unsplash.com/photo-{id}` for direct image URLs.
+const PHOTO_SETS = {
+  apartment: [
+    'photo-1522708323590-d24dbb6b0267',
+    'photo-1502672260266-1c1ef2d93688',
+    'photo-1493809842364-78817add7ffb',
+  ],
+  house: [
+    'photo-1568605114967-8130f3a36994',
+    'photo-1564013799919-ab600027ffc6',
+    'photo-1570129477492-45c003edd2be',
+  ],
+  studio: [
+    'photo-1551516594-56cb78394645',
+    'photo-1554995207-c18c203602cb',
+    'photo-1560448204-e02f11c3d0e2',
+  ],
+  room: [
+    'photo-1540518614846-7eded433c457',
+    'photo-1505693416388-ac5ce068fe85',
+    'photo-1522771739844-6a9f6d5f14af',
+  ],
+  kitchen: [
+    'photo-1556909114-f6e7ad7d3136',
+    'photo-1556909172-54557c7e4fb7',
+    'photo-1565182999561-18d7dc61c393',
+  ],
+  bedroom: [
+    'photo-1505693314120-0d443867891c',
+    'photo-1540518614846-7eded433c457',
+    'photo-1522771739844-6a9f6d5f14af',
+  ],
+};
+function unsplashUrl(photoId, w=800) {
+  return `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=${w}&q=70`;
+}
+function getPhotos(tag) {
+  return (PHOTO_SETS[tag] || PHOTO_SETS.apartment).map(id => unsplashUrl(id));
+}
+
+const SEED_PROPERTIES = [
+  { id:'p1', landlordId:'ll_1', address:'12 Main Boulevard, Gulberg', city:'Lahore, PK',
+    propertyType:'Apartment', bedrooms:2, rent:1400, minScore:720,
+    description:'Bright 2-bedroom apartment in the heart of Gulberg. Recently renovated kitchen, secure parking, and 24/7 building security.',
+    photoTag:'apartment', createdAt:Date.now()-86400000*7 },
+  { id:'p2', landlordId:'ll_1', address:'47 Defence Phase 5, DHA', city:'Lahore, PK',
+    propertyType:'House', bedrooms:4, rent:2800, minScore:750,
+    description:'Spacious 4-bedroom family house with private garden, 2 car parking, and modern fittings throughout. Premium DHA location.',
+    photoTag:'house', createdAt:Date.now()-86400000*3 },
+  { id:'p3', landlordId:'ll_2', address:'8 Clifton Block 4', city:'Karachi, PK',
+    propertyType:'Apartment', bedrooms:3, rent:1900, minScore:680,
+    description:'Sea-view 3-bed apartment in Clifton. Marble flooring, attached bathrooms, and a generous balcony with morning sun.',
+    photoTag:'kitchen', createdAt:Date.now()-86400000*14 },
+  { id:'p4', landlordId:'ll_2', address:'F-7/3, Capital',  city:'Islamabad, PK',
+    propertyType:'Studio', bedrooms:1, rent:850, minScore:620,
+    description:'Cozy studio in central F-7. Walking distance to cafes and parks. Ideal for young professionals.',
+    photoTag:'studio', createdAt:Date.now()-86400000*5 },
+  { id:'p5', landlordId:'ll_3', address:'PCSIR Society, Phase 2', city:'Lahore, PK',
+    propertyType:'House', bedrooms:3, rent:1600, minScore:650,
+    description:'Affordable 3-bed house in a quiet residential society. Backyard, servant quarter, and dedicated parking.',
+    photoTag:'house', createdAt:Date.now()-86400000*21 },
+  { id:'p6', landlordId:'ll_3', address:'Johar Town Y-Block', city:'Lahore, PK',
+    propertyType:'Room', bedrooms:1, rent:450, minScore:580,
+    description:'Furnished private room in a shared house. Shared kitchen, high-speed wifi, and weekly cleaning included.',
+    photoTag:'room', createdAt:Date.now()-86400000*30 },
+  { id:'p7', landlordId:'ll_1', address:'Bahria Town Sector C', city:'Lahore, PK',
+    propertyType:'Apartment', bedrooms:2, rent:1100, minScore:660,
+    description:'Modern 2-bed in gated Bahria community. Access to pool, gym, and 24/7 power backup.',
+    photoTag:'bedroom', createdAt:Date.now()-86400000*10 },
+];
+
+const SCRIPTED_REPLIES = [
+  "Hi! Thanks for reaching out. Yes, the property is still available.",
+  "Of course — happy to share more details. What would you like to know?",
+  "I can arrange a viewing this weekend if that works for you.",
+  "Yes, the rent includes utilities. Deposit is one month's rent.",
+  "Great. I'll send you the application details shortly.",
+];
+
+/* === STATE =============================================== */
+const state = {
+  role: null,                    // 'tenant' | 'landlord'
+  activeLandlordId: 'll_1',     // when in landlord role, which landlord persona
+  activeTenantId: null,         // when in tenant role, which tenant profile is 'me'
+  screen: 'launcher',
+  tab: 'marketplace',
+  tenants: [],
+  properties: [],
+  applications: [],             // { id, propertyId, tenantId, status, createdAt }
+  fetchedCredit: new Set(),
+  threads: {},                  // keyed by `${role}:${otherId}` to avoid mixups
+  search: '',
+  fb: { stars: 0, tags: new Set() },
+  // for property detail photo gallery
+  galleryIdx: 0,
+};
+
+/* === INIT ================================================ */
+function init() {
+  const storedT = JSON.parse(localStorage.getItem('credentia.tenants') || '[]');
+  state.tenants = [...storedT, ...SEED_TENANTS];
+  const storedP = JSON.parse(localStorage.getItem('credentia.properties') || 'null');
+  state.properties = storedP || SEED_PROPERTIES.slice();
+  state.applications = JSON.parse(localStorage.getItem('credentia.applications') || '[]');
+  state.threads = JSON.parse(localStorage.getItem('credentia.threads') || '{}');
+  const fc = JSON.parse(sessionStorage.getItem('credentia.fetched') || '[]');
+  state.fetchedCredit = new Set(fc);
+  // restore "me as tenant" choice if any
+  state.activeTenantId = localStorage.getItem('credentia.activeTenantId') || null;
+  state.activeLandlordId = localStorage.getItem('credentia.activeLandlordId') || 'll_1';
+  renderLauncher();
+}
+window.addEventListener('DOMContentLoaded', init);
+
+/* === HELPERS ============================================= */
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+const escapeHtml = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const initials = (name) => name.split(/\s+/).map(n => n[0]).slice(0,2).join('').toUpperCase();
+function showToast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(window.__tt); window.__tt = setTimeout(() => t.classList.remove('show'), 2400);
+}
+function scoreBand(s) {
+  if (s >= 780) return { label:'Excellent', cls:'excellent', color:'#2E7D5B' };
+  if (s >= 720) return { label:'Good',      cls:'good',      color:'#2E7D5B' };
+  if (s >= 670) return { label:'Fair',      cls:'fair',      color:'#C9892E' };
+  return         { label:'Poor',      cls:'poor',      color:'#B4452B' };
+}
+function getLandlord(id) { return LANDLORDS.find(l => l.id === id); }
+function getTenant(id) { return state.tenants.find(t => t.id === id); }
+function getProperty(id) { return state.properties.find(p => p.id === id); }
+function getMyTenant() {
+  return state.activeTenantId ? getTenant(state.activeTenantId) : null;
+}
+function persistTenants() {
+  // only persist user-created tenants (those not in SEED)
+  const seedIds = new Set(SEED_TENANTS.map(s => s.id));
+  const userMade = state.tenants.filter(t => !seedIds.has(t.id));
+  localStorage.setItem('credentia.tenants', JSON.stringify(userMade));
+}
+function persistProperties() { localStorage.setItem('credentia.properties', JSON.stringify(state.properties)); }
+function persistApplications() { localStorage.setItem('credentia.applications', JSON.stringify(state.applications)); }
+function persistThreads() { localStorage.setItem('credentia.threads', JSON.stringify(state.threads)); }
+function persistFetched() { sessionStorage.setItem('credentia.fetched', JSON.stringify(Array.from(state.fetchedCredit))); }
+
+function setRoleUI() {
+  $('#topbar').classList.toggle('hidden', state.screen === 'launcher');
+  $('#fab').classList.toggle('hidden', state.screen === 'launcher');
+  const extra = $('#topbarExtra');
+  if (state.role === 'landlord') {
+    $('#roleLabel').textContent = `Landlord · ${getLandlord(state.activeLandlordId)?.name.split(' ')[0]}`;
+    extra.innerHTML = `
+      <select class="persona-select" onchange="switchLandlordPersona(this.value)">
+        ${LANDLORDS.map(l => `<option value="${l.id}" ${l.id===state.activeLandlordId?'selected':''}>${escapeHtml(l.name)} · ★${l.rating}</option>`).join('')}
+      </select>`;
+  } else if (state.role === 'tenant') {
+    const me = getMyTenant();
+    $('#roleLabel').textContent = me ? `Tenant · ${me.name.split(' ')[0]}` : 'Tenant';
+    extra.innerHTML = '';
+  } else {
+    extra.innerHTML = '';
+  }
+}
+
+function switchLandlordPersona(id) {
+  state.activeLandlordId = id;
+  localStorage.setItem('credentia.activeLandlordId', id);
+  showToast(`Switched to ${getLandlord(id).name}`);
+  renderRoleShell();
+}
+
+function setMyTenant(id) {
+  state.activeTenantId = id;
+  if (id) localStorage.setItem('credentia.activeTenantId', id);
+  else localStorage.removeItem('credentia.activeTenantId');
+  setRoleUI();
+}
+
+/* Compute qualification status for a property given my tenant score */
+function qualificationFor(prop) {
+  const me = getMyTenant();
+  if (!me) return 'unknown';
+  return me.creditScore >= prop.minScore ? 'qualifies' : 'does-not';
+}
+
+/* === LAUNCHER ============================================ */
+function renderLauncher() {
+  state.screen = 'launcher';
+  state.role = null;
+  setRoleUI();
+  $('#main').innerHTML = `
+    <section class="launcher screen">
+      <div class="launcher-bg"></div>
+      <div class="launcher-card">
+        <span class="eyebrow"><span class="ping"></span>Closed Beta · Demo</span>
+        <h1 class="hero">Rental trust,<br/><em>verified</em>.</h1>
+        <p class="hero-sub">A marketplace where tenants find homes that match their credit, and landlords find tenants they can trust.</p>
+        <div class="role-grid">
+          <div class="role-card tenant" onclick="enterRole('tenant')">
+            <div class="role-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <h3>I'm a Tenant</h3>
+            <p>Browse properties, see what you qualify for, and apply in one tap.</p>
+            <span class="role-cta">Continue as tenant
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </span>
+          </div>
+          <div class="role-card landlord" onclick="enterRole('landlord')">
+            <div class="role-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <h3>I'm a Landlord</h3>
+            <p>List properties, set credit minimums, and review ranked applicants.</p>
+            <span class="role-cta">Continue as landlord
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </span>
+          </div>
+        </div>
+        <p class="footer-note">All data shown is for demonstration purposes. Closed testers only.</p>
+      </div>
+    </section>
+  `;
+}
+
+function enterRole(role) {
+  state.role = role;
+  state.tab = role === 'tenant' ? 'marketplace' : 'listings';
+  renderRoleShell();
+}
+
+function goHome() { renderLauncher(); }
+
+/* === ROLE SHELL (tabs) =================================== */
+function renderRoleShell() {
+  state.screen = 'role-app';
+  setRoleUI();
+
+  const tabs = state.role === 'tenant' ? [
+    { key:'marketplace', label:'Marketplace' },
+    { key:'applications', label:'My Applications', badge: myApplicationsCount() },
+    { key:'profile', label:'My Profile' },
+    { key:'messages', label:'Messages' },
+  ] : [
+    { key:'listings', label:'My Listings' },
+    { key:'applicants', label:'Applicants', badge: myApplicantsCount() },
+    { key:'tenants', label:'Find Tenants' },
+    { key:'messages', label:'Messages' },
+  ];
+
+  $('#main').innerHTML = `
+    <section class="screen">
+      <div class="tabs">
+        ${tabs.map(t => `
+          <button class="tab ${state.tab===t.key?'active':''}" onclick="switchTab('${t.key}')">
+            ${t.label}${t.badge > 0 ? `<span class="badge">${t.badge}</span>` : ''}
+          </button>
+        `).join('')}
+      </div>
+      <div id="tabContent"></div>
+    </section>
+  `;
+  renderTab();
+}
+
+function switchTab(key) {
+  state.tab = key;
+  renderRoleShell();
+}
+
+function renderTab() {
+  const m = $('#tabContent');
+  if (state.role === 'tenant') {
+    if (state.tab === 'marketplace') m.innerHTML = renderMarketplace();
+    else if (state.tab === 'applications') m.innerHTML = renderMyApplications();
+    else if (state.tab === 'profile') m.innerHTML = renderTenantProfileTab();
+    else if (state.tab === 'messages') renderMessages();
+  } else {
+    if (state.tab === 'listings') m.innerHTML = renderMyListings();
+    else if (state.tab === 'applicants') m.innerHTML = renderApplicantsTab();
+    else if (state.tab === 'tenants') m.innerHTML = renderTenantDirectory();
+    else if (state.tab === 'messages') renderMessages();
+  }
+}
+
+function myApplicationsCount() {
+  if (!state.activeTenantId) return 0;
+  return state.applications.filter(a => a.tenantId === state.activeTenantId).length;
+}
+function myApplicantsCount() {
+  const myProps = state.properties.filter(p => p.landlordId === state.activeLandlordId);
+  const propIds = new Set(myProps.map(p => p.id));
+  return state.applications.filter(a => propIds.has(a.propertyId) && a.status === 'pending').length;
+}
+
+/* ========================================================= */
+/* TENANT — MARKETPLACE                                       */
+/* ========================================================= */
+function renderMarketplace() {
+  const me = getMyTenant();
+  const q = state.search.trim().toLowerCase();
+  let list = state.properties;
+  if (q) list = list.filter(p =>
+    (p.address + ' ' + p.city + ' ' + p.propertyType + ' ' + p.description).toLowerCase().includes(q));
+
+  return `
+    ${me ? `
+      <div class="me-banner">
+        <div class="avatar lg" style="background:${me.color}">${initials(me.name)}</div>
+        <div class="info">
+          <div class="greeting">Welcome, ${escapeHtml(me.name.split(' ')[0])}</div>
+          <div style="font-size:13px; color:var(--ink-soft); margin-top:2px;">${escapeHtml(me.occupation)} · ${escapeHtml(me.city)}</div>
+        </div>
+        <div class="me-score">
+          <div class="v" style="color:${scoreBand(me.creditScore).color}">${me.creditScore}</div>
+          <div class="l">Your credit</div>
+        </div>
+      </div>
+    ` : `
+      <div class="card" style="border-left: 4px solid var(--accent); margin-bottom: 16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+          <div>
+            <h4 class="section" style="margin:0 0 4px;">Create a tenant profile to apply</h4>
+            <p style="margin:0; color:var(--ink-soft); font-size:14px;">You can browse without a profile, but you'll need one to apply for properties.</p>
+          </div>
+          <button class="btn btn-primary" onclick="switchTab('profile')">Set up profile →</button>
+        </div>
+      </div>
+    `}
+
+    <div class="page-head">
+      <div>
+        <h2>Marketplace</h2>
+        <p>${list.length} ${list.length === 1 ? 'property' : 'properties'} available${me ? ` · You qualify for ${list.filter(p => qualificationFor(p)==='qualifies').length}` : ''}</p>
+      </div>
+    </div>
+
+    <div class="filter-row">
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" placeholder="Search by location, type, or description" oninput="state.search=this.value; renderTab()" value="${escapeHtml(state.search)}"/>
+      </div>
+    </div>
+
+    ${list.length === 0 ? `<div class="empty"><h3>No properties</h3><p>Try a different search.</p></div>` : `
+      <div class="property-grid">
+        ${list.map(p => renderPropertyCard(p)).join('')}
+      </div>
+    `}
+  `;
+}
+
+function renderPropertyCard(p) {
+  const ll = getLandlord(p.landlordId);
+  const photos = getPhotos(p.photoTag);
+  const qual = qualificationFor(p);
+  const me = getMyTenant();
+  const applied = me && state.applications.some(a => a.propertyId === p.id && a.tenantId === me.id);
+
+  const qualLabel = qual === 'qualifies' ? '✓ You qualify' :
+                    qual === 'does-not' ? `✗ Need ${p.minScore}+` :
+                    `${p.minScore}+ required`;
+
+  return `
+    <div class="property-card ${applied ? 'applied' : ''}" onclick="openProperty('${p.id}')">
+      <div class="property-photo">
+        <img src="${photos[0]}" alt="${escapeHtml(p.address)}" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, var(--brand), var(--brand-2))'"/>
+        <div class="qualify-badge ${qual}">${qualLabel}</div>
+        <div class="ll-rating">★ ${ll?.rating || '—'}</div>
+        ${applied ? '<div class="applied-tag">Applied</div>' : ''}
+      </div>
+      <div class="property-body">
+        <div class="property-rent">$${p.rent.toLocaleString()}<span class="unit"> / mo</span></div>
+        <div class="property-addr">${escapeHtml(p.address)}</div>
+        <div class="property-meta">${escapeHtml(p.city)} · ${escapeHtml(p.propertyType)} · ${p.bedrooms} bed</div>
+        <div class="property-foot">
+          <span class="min-score">
+            <span class="lock"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+            Min credit ${p.minScore}
+          </span>
+          <span>${escapeHtml(ll?.name.split(' ')[0] || '')}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ========================================================= */
+/* TENANT — PROPERTY DETAIL                                   */
+/* ========================================================= */
+function openProperty(id) {
+  state.screen = 'property-detail';
+  state.galleryIdx = 0;
+  const p = getProperty(id);
+  if (!p) return;
+  const ll = getLandlord(p.landlordId);
+  const photos = getPhotos(p.photoTag);
+  const qual = qualificationFor(p);
+  const me = getMyTenant();
+  const applied = me && state.applications.some(a => a.propertyId === p.id && a.tenantId === me.id);
+
+  $('#main').innerHTML = `
+    <section class="screen">
+      <button class="back-btn" onclick="renderRoleShell()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Back to marketplace
+      </button>
+
+      <div class="property-hero">
+        <img id="heroImg" src="${photos[0]}" alt="${escapeHtml(p.address)}" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, var(--brand), var(--brand-2))'"/>
+      </div>
+      <div class="photo-thumbs">
+        ${photos.map((url, i) => `<img src="${url}" alt="" class="${i===0?'active':''}" onclick="swapHero(${i}, ['${photos.join("','")}'])"/>`).join('')}
+      </div>
+
+      <div class="detail-grid" style="margin-top: 18px;">
+        <div>
+          ${qual !== 'unknown' ? `
+            <div class="qualification-banner ${qual}">
+              ${qual === 'qualifies' ? `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                <div><b>You qualify!</b> Your credit score (${me.creditScore}) meets the minimum (${p.minScore}).</div>
+              ` : `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6"/><path d="M9 9l6 6"/></svg>
+                <div>Your credit score (${me.creditScore}) is below the minimum (${p.minScore}).</div>
+              `}
+            </div>
+          ` : `
+            <div class="qualification-banner unknown">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+              <div><b>Create a profile to check eligibility.</b> This property requires a minimum credit score of ${p.minScore}.</div>
+            </div>
+          `}
+
+          <div class="card">
+            <h4 class="section" style="font-size:24px; margin-bottom:8px;">$${p.rent.toLocaleString()} <span style="font-size:14px; color:var(--ink-mute); font-weight:400;">/ month</span></h4>
+            <div style="font-weight:600; font-size:16px; margin-bottom:4px;">${escapeHtml(p.address)}</div>
+            <div style="color:var(--ink-soft); font-size:14px; margin-bottom:14px;">${escapeHtml(p.city)} · ${escapeHtml(p.propertyType)} · ${p.bedrooms} bedroom${p.bedrooms===1?'':'s'}</div>
+            <p style="color:var(--ink-soft); font-size:14px; line-height:1.6; margin:0 0 18px;">${escapeHtml(p.description)}</p>
+
+            <div class="data-list">
+              <div><dt>Property type</dt><dd>${escapeHtml(p.propertyType)}</dd></div>
+              <div><dt>Bedrooms</dt><dd>${p.bedrooms}</dd></div>
+              <div><dt>Monthly rent</dt><dd>$${p.rent.toLocaleString()}</dd></div>
+              <div><dt>Minimum credit</dt><dd>${p.minScore}</dd></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h4 class="section">Property owner</h4>
+            <div class="landlord-strip" onclick="openLandlordProfile('${ll.id}')">
+              <div class="avatar" style="background:${ll.avatar}">${initials(ll.name)}</div>
+              <div class="info">
+                <div class="name">${escapeHtml(ll.name)}</div>
+                <div class="sub">${escapeHtml(ll.company)} · <span class="star-rating">★ ${ll.rating}</span> <span style="color:var(--ink-mute)">(${ll.totalReviews} reviews)</span></div>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink-mute)"><path d="m9 18 6-6-6-6"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="position:sticky; top:80px;">
+            <h4 class="section">Apply for this property</h4>
+            ${!me ? `
+              <p style="color:var(--ink-soft); font-size:13px; margin: 0 0 14px;">Create a tenant profile to apply.</p>
+              <button class="btn btn-primary btn-block" onclick="switchTab('profile')">Set up profile</button>
+            ` : applied ? `
+              <div style="text-align:center; padding:14px 0;">
+                <div style="width:48px; height:48px; border-radius:50%; background:rgba(46,125,91,.12); color:var(--good); display:grid; place-items:center; margin: 0 auto 10px;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                </div>
+                <div style="font-weight:600; margin-bottom:4px;">Application sent</div>
+                <p style="color:var(--ink-soft); font-size:13px; margin: 0 0 14px;">${escapeHtml(ll.name)} will review and respond.</p>
+                <button class="btn btn-ghost btn-sm" onclick="openChatWith('landlord','${ll.id}')">Message landlord</button>
+              </div>
+            ` : qual === 'does-not' ? `
+              <p style="color:var(--ink-soft); font-size:13px; margin: 0 0 14px;">You can still apply, but the landlord requires a minimum credit score of ${p.minScore}. Applications below this may be declined.</p>
+              <button class="btn btn-accent btn-block" onclick="applyToProperty('${p.id}')">Apply anyway</button>
+            ` : `
+              <p style="color:var(--ink-soft); font-size:13px; margin: 0 0 14px;">You meet the requirements. Send your application — it includes your verified profile and credit score.</p>
+              <button class="btn btn-primary btn-block" onclick="applyToProperty('${p.id}')">Apply now</button>
+            `}
+            <button class="btn btn-ghost btn-block" style="margin-top:8px;" onclick="openChatWith('landlord','${ll.id}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Message landlord
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function swapHero(idx, photos) {
+  state.galleryIdx = idx;
+  const hero = $('#heroImg');
+  if (hero) hero.src = photos[idx];
+  $$('.photo-thumbs img').forEach((img, i) => img.classList.toggle('active', i === idx));
+}
+
+function applyToProperty(propertyId) {
+  const me = getMyTenant();
+  if (!me) {
+    showToast('Create a profile first');
+    switchTab('profile');
+    return;
+  }
+  // Don't double-apply
+  if (state.applications.some(a => a.propertyId === propertyId && a.tenantId === me.id)) {
+    showToast('Already applied to this property');
+    return;
+  }
+  state.applications.unshift({
+    id: 'app_' + Date.now(),
+    propertyId, tenantId: me.id,
+    status: 'pending',
+    createdAt: Date.now(),
+  });
+  persistApplications();
+  showToast('Application sent!');
+  openProperty(propertyId); // re-render to show applied state
+}
+
+/* === Landlord profile (tenant viewing landlord) ========== */
+function openLandlordProfile(landlordId) {
+  state.screen = 'landlord-profile';
+  const ll = getLandlord(landlordId);
+  if (!ll) return;
+  // Properties this landlord owns
+  const theirProps = state.properties.filter(p => p.landlordId === landlordId);
+
+  $('#main').innerHTML = `
+    <section class="screen">
+      <button class="back-btn" onclick="renderRoleShell()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Back
+      </button>
+
+      <div class="card">
+        <div class="profile-head">
+          <div class="avatar lg" style="background:${ll.avatar}">${initials(ll.name)}</div>
+          <div>
+            <h3>${escapeHtml(ll.name)}</h3>
+            <div class="meta">${escapeHtml(ll.company)}</div>
+            <div style="margin-top:6px; display:flex; align-items:center; gap:10px;">
+              <span class="star-rating" style="font-size:16px;">★ ${ll.rating}</span>
+              <span style="font-size:12px; color:var(--ink-mute);">(${ll.totalReviews} verified tenant reviews)</span>
+            </div>
+          </div>
+        </div>
+        <p style="color:var(--ink-soft); font-size:14px; margin: 0 0 16px;">${escapeHtml(ll.bio)}</p>
+        <div class="detail-actions">
+          <button class="btn btn-primary" onclick="openChatWith('landlord','${ll.id}')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Message
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h4 class="section">${theirProps.length} active ${theirProps.length === 1 ? 'listing' : 'listings'}</h4>
+        ${theirProps.length === 0 ? '<div class="empty-state"><h4>No active listings</h4></div>' : `
+          <div class="property-grid">
+            ${theirProps.map(p => renderPropertyCard(p)).join('')}
+          </div>
+        `}
+      </div>
+    </section>
+  `;
+}
+
+/* ========================================================= */
+/* TENANT — MY APPLICATIONS                                   */
+/* ========================================================= */
+function renderMyApplications() {
+  const me = getMyTenant();
+  if (!me) {
+    return `
+      <div class="empty-state">
+        <h4>Create a profile to apply</h4>
+        <p style="margin: 4px 0 14px;">Once you have a tenant profile, you can apply to properties and track them here.</p>
+        <button class="btn btn-primary" onclick="switchTab('profile')">Set up profile →</button>
+      </div>
+    `;
+  }
+  const mine = state.applications.filter(a => a.tenantId === me.id);
+  return `
+    <div class="page-head"><div><h2>My applications</h2><p>${mine.length} application${mine.length===1?'':'s'} sent.</p></div></div>
+    ${mine.length === 0 ? `
+      <div class="empty-state">
+        <h4>No applications yet</h4>
+        <p style="margin: 4px 0 14px;">Browse properties and apply to ones you qualify for.</p>
+        <button class="btn btn-primary" onclick="switchTab('marketplace')">Browse marketplace →</button>
+      </div>
+    ` : `
+      <div class="card">
+        ${mine.map(a => {
+          const p = getProperty(a.propertyId);
+          if (!p) return '';
+          const ll = getLandlord(p.landlordId);
+          const photos = getPhotos(p.photoTag);
+          return `
+            <div class="my-profile-row" onclick="openProperty('${p.id}')" style="cursor:pointer;">
+              <img src="${photos[0]}" alt="" style="width:60px; height:60px; object-fit:cover; border-radius:8px;" onerror="this.style.display='none'"/>
+              <div class="info">
+                <div class="name">${escapeHtml(p.address)}</div>
+                <div class="sub">$${p.rent.toLocaleString()}/mo · ${escapeHtml(ll?.name || '')} · Applied ${timeAgo(a.createdAt)}</div>
+              </div>
+              <span class="status-pill ${a.status}">${a.status}</span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `}
+  `;
+}
+
+function timeAgo(ts) {
+  const s = (Date.now() - ts) / 1000;
+  if (s < 60) return 'just now';
+  if (s < 3600) return Math.floor(s/60) + ' min ago';
+  if (s < 86400) return Math.floor(s/3600) + ' hr ago';
+  return Math.floor(s/86400) + ' days ago';
+}
+
+/* ========================================================= */
+/* TENANT — MY PROFILE TAB                                    */
+/* ========================================================= */
+function renderTenantProfileTab() {
+  const userProfiles = state.tenants.filter(t => !SEED_TENANTS.some(s => s.id === t.id));
+  return `
+    <div class="page-head">
+      <div>
+        <h2>My profile</h2>
+        <p>Your profile is shared with landlords when you apply.</p>
+      </div>
+      <button class="btn btn-primary" onclick="renderTenantForm()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+        New profile
+      </button>
+    </div>
+
+    <div class="card">
+      <h4 class="section">Profiles you've created</h4>
+      ${userProfiles.length === 0 ? `
+        <div class="empty-state">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--ink-mute)"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <h4>No profiles yet</h4>
+          <p style="margin: 4px 0 14px;">Create one to start applying to properties.</p>
+          <button class="btn btn-primary" onclick="renderTenantForm()">Create profile</button>
+        </div>
+      ` : userProfiles.map(p => {
+        const isActive = state.activeTenantId === p.id;
+        return `
+          <div class="my-profile-row" style="${isActive ? 'border: 2px solid var(--brand);' : ''}">
+            <div class="avatar" style="background:${p.color}">${initials(p.name)}</div>
+            <div class="info">
+              <div class="name">${escapeHtml(p.name)} ${isActive ? '<span style="color:var(--brand); font-size:11px; margin-left:6px;">✓ ACTIVE</span>' : ''}</div>
+              <div class="sub">${escapeHtml(p.occupation)} · ${escapeHtml(p.city)} · $${p.income.toLocaleString()}/mo</div>
+            </div>
+            <div class="score-mini">
+              <div class="v" style="color:${scoreBand(p.creditScore).color}">${p.creditScore}</div>
+              <div class="l">Credit</div>
+            </div>
+            <div class="actions">
+              ${!isActive ? `<button class="btn btn-ghost btn-sm" onclick="setMyTenant('${p.id}'); renderRoleShell();">Use this</button>` : ''}
+              <button class="icon-btn" onclick="deleteProfile('${p.id}')" title="Delete profile">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+function deleteProfile(id) {
+  if (!confirm('Delete this profile?')) return;
+  state.tenants = state.tenants.filter(t => t.id !== id);
+  persistTenants();
+  if (state.activeTenantId === id) setMyTenant(null);
+  // Also remove their applications
+  state.applications = state.applications.filter(a => a.tenantId !== id);
+  persistApplications();
+  showToast('Profile deleted');
+  renderRoleShell();
+}
+
+function renderTenantForm() {
+  state.screen = 'tenant-form';
+  setRoleUI();
+  $('#main').innerHTML = `
+    <section class="screen">
+      <button class="back-btn" onclick="renderRoleShell()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Back
+      </button>
+      <div class="page-head"><div><h2>New tenant profile</h2><p>Landlords see your verified details when you apply.</p></div></div>
+      <div class="card">
+        <h4 class="section">Personal information</h4>
+        <p class="section-sub">SSN is masked when shown to landlords.</p>
+        <form id="tenantForm" onsubmit="submitTenant(event)">
+          <div class="form-grid">
+            <div class="field"><label for="t-name">Full name</label><input id="t-name" name="name" required placeholder="Aisha Rahman"/></div>
+            <div class="field"><label for="t-age">Age</label><input id="t-age" name="age" type="number" min="18" max="99" required placeholder="28"/></div>
+            <div class="field">
+              <label for="t-ssn">SSN / National ID</label>
+              <input id="t-ssn" name="ssn" required placeholder="000-00-0000" maxlength="20"/>
+              <span class="field-hint">🔒 Encrypted, never shown to landlords</span>
+            </div>
+            <div class="field"><label for="t-phone">Phone</label><input id="t-phone" name="phone" required placeholder="+92 300 1234567"/></div>
+            <div class="field"><label for="t-email">Email</label><input id="t-email" name="email" type="email" required placeholder="you@example.com"/></div>
+            <div class="field"><label for="t-city">City</label><input id="t-city" name="city" required placeholder="Lahore, PK"/></div>
+          </div>
+          <h4 class="section" style="margin-top:24px">Employment & income</h4>
+          <div class="form-grid">
+            <div class="field"><label for="t-occ">Occupation</label><input id="t-occ" name="occupation" required placeholder="Software Engineer"/></div>
+            <div class="field"><label for="t-emp">Employer</label><input id="t-emp" name="employer" required placeholder="Northwind Labs"/></div>
+            <div class="field"><label for="t-inc">Monthly income ($)</label><input id="t-inc" name="income" type="number" min="0" required placeholder="3500"/></div>
+            <div class="field"><label for="t-pref">Preferred rent budget</label><input id="t-pref" name="budget" type="number" min="0" placeholder="900"/></div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-ghost" onclick="renderRoleShell()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Create profile</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  `;
+}
+
+function submitTenant(e) {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(e.target).entries());
+  const ssnDigits = String(data.ssn).replace(/\D/g,'');
+  const maskedSsn = ssnDigits.length >= 4 ? `***-**-${ssnDigits.slice(-4)}` : '***-**-****';
+  const inc = Number(data.income) || 0;
+  const score = Math.max(620, Math.min(820, Math.round(660 + Math.random()*120 + Math.min(60, inc/100))));
+  const COLORS = ["#0B3D2E","#D97A3C","#14583F","#B4452B","#C9892E"];
+  const newTenant = {
+    id: 't_' + Date.now(),
+    name: data.name, age: Number(data.age), occupation: data.occupation,
+    employer: data.employer, income: inc, city: data.city,
+    ssn: maskedSsn, phone: data.phone, email: data.email,
+    creditScore: score, isNew: true,
+    color: COLORS[Math.floor(Math.random()*COLORS.length)]
+  };
+  state.tenants = [newTenant, ...state.tenants];
+  persistTenants();
+  // auto-activate this profile
+  setMyTenant(newTenant.id);
+  showToast(`Profile created — credit score ${score}`);
+  state.tab = 'profile';
+  renderRoleShell();
+}
+
+/* ========================================================= */
+/* LANDLORD — MY LISTINGS                                     */
+/* ========================================================= */
+function renderMyListings() {
+  const mine = state.properties.filter(p => p.landlordId === state.activeLandlordId);
+  return `
+    <div class="page-head">
+      <div>
+        <h2>My listings</h2>
+        <p>You have ${mine.length} active ${mine.length===1?'listing':'listings'}.</p>
+      </div>
+      <button class="btn btn-primary" onclick="openListing()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+        New listing
+      </button>
+    </div>
+    ${mine.length === 0 ? `
+      <div class="empty-state">
+        <h4>No listings yet</h4>
+        <p style="margin: 4px 0 14px;">List your first property to start receiving applications.</p>
+        <button class="btn btn-primary" onclick="openListing()">+ Create first listing</button>
+      </div>
+    ` : `
+      <div class="property-grid">
+        ${mine.map(p => renderLandlordListingCard(p)).join('')}
+      </div>
+    `}
+  `;
+}
+
+function renderLandlordListingCard(p) {
+  const photos = getPhotos(p.photoTag);
+  const apps = state.applications.filter(a => a.propertyId === p.id);
+  const pending = apps.filter(a => a.status === 'pending').length;
+
+  return `
+    <div class="property-card" onclick="openListingDetail('${p.id}')">
+      <div class="property-photo">
+        <img src="${photos[0]}" alt="${escapeHtml(p.address)}" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, var(--brand), var(--brand-2))'"/>
+        ${apps.length > 0 ? `<div class="qualify-badge" style="background: var(--brand); color: #fff;">${apps.length} applicant${apps.length===1?'':'s'}</div>` : ''}
+      </div>
+      <div class="property-body">
+        <div class="property-rent">$${p.rent.toLocaleString()}<span class="unit"> / mo</span></div>
+        <div class="property-addr">${escapeHtml(p.address)}</div>
+        <div class="property-meta">${escapeHtml(p.city)} · ${escapeHtml(p.propertyType)} · ${p.bedrooms} bed</div>
+        <div class="property-foot">
+          <span class="min-score">Min ${p.minScore}</span>
+          <span>${pending} pending</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* === Listing detail (landlord side) — applicants list ==== */
+function openListingDetail(propertyId) {
+  state.screen = 'listing-detail';
+  const p = getProperty(propertyId);
+  if (!p) return;
+  const photos = getPhotos(p.photoTag);
+  const apps = state.applications
+    .filter(a => a.propertyId === p.id)
+    .map(a => ({ app:a, tenant:getTenant(a.tenantId) }))
+    .filter(x => x.tenant)
+    .sort((a,b) => b.tenant.creditScore - a.tenant.creditScore);
+
+  $('#main').innerHTML = `
+    <section class="screen">
+      <button class="back-btn" onclick="state.tab='listings'; renderRoleShell()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Back to listings
+      </button>
+
+      <div class="property-hero">
+        <img src="${photos[0]}" alt="" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, var(--brand), var(--brand-2))'"/>
+      </div>
+
+      <div class="detail-grid" style="margin-top:18px;">
+        <div>
+          <div class="card">
+            <h4 class="section" style="font-size:24px; margin-bottom:8px;">$${p.rent.toLocaleString()} <span style="font-size:14px; color:var(--ink-mute); font-weight:400;">/ month</span></h4>
+            <div style="font-weight:600; font-size:16px; margin-bottom:4px;">${escapeHtml(p.address)}</div>
+            <div style="color:var(--ink-soft); font-size:14px; margin-bottom:14px;">${escapeHtml(p.city)} · ${escapeHtml(p.propertyType)} · ${p.bedrooms} bedroom${p.bedrooms===1?'':'s'}</div>
+            <p style="color:var(--ink-soft); font-size:14px; line-height:1.6; margin:0 0 14px;">${escapeHtml(p.description)}</p>
+            <div class="data-list">
+              <div><dt>Minimum credit</dt><dd>${p.minScore}</dd></div>
+              <div><dt>Applications</dt><dd>${apps.length} total</dd></div>
+            </div>
+            <div class="detail-actions">
+              <button class="btn btn-danger-ghost" onclick="deleteListing('${p.id}')">Delete listing</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <h4 class="section" style="display:flex; justify-content:space-between; align-items:center;">
+              <span>Applicants (${apps.length})</span>
+              ${apps.length > 0 ? `<span style="font-size:11px; color:var(--ink-mute); font-weight:500;">Ranked by credit ↓</span>` : ''}
+            </h4>
+            ${apps.length === 0 ? `
+              <div class="empty-state">
+                <h4>No applicants yet</h4>
+                <p style="margin: 4px 0 0; font-size:13px;">Your listing is live. Applications will appear here.</p>
+              </div>
+            ` : apps.map(({app, tenant}) => {
+              const fetched = state.fetchedCredit.has(tenant.id);
+              const qualifies = tenant.creditScore >= p.minScore;
+              const rowClass = !fetched ? 'locked-score' : (qualifies ? 'qualifies' : 'does-not');
+              return `
+                <div class="applicant-row ${rowClass}" onclick="openTenantDetailFromApp('${tenant.id}', '${p.id}')">
+                  <div class="avatar" style="background:${tenant.color}">${initials(tenant.name)}</div>
+                  <div class="info">
+                    <div class="name">${escapeHtml(tenant.name)} ${tenant.isNew?'<span style="font-size:10px; background:var(--accent); color:#fff; padding:1px 6px; border-radius:999px; margin-left:4px;">NEW</span>':''}</div>
+                    <div class="sub">${escapeHtml(tenant.occupation)} · ${escapeHtml(tenant.city)} · Applied ${timeAgo(app.createdAt)}</div>
+                    <div style="margin-top:4px;"><span class="status-pill ${app.status}">${app.status}</span></div>
+                  </div>
+                  <div class="score-block">
+                    ${fetched ? `
+                      <div class="v" style="color:${scoreBand(tenant.creditScore).color}">${tenant.creditScore}</div>
+                      <div class="l">${qualifies ? '✓ Qualifies' : '✗ Below ' + p.minScore}</div>
+                    ` : `
+                      <div class="v" style="color:var(--ink-mute); font-size:14px;">🔒</div>
+                      <div class="l">Fetch to view</div>
+                    `}
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function openTenantDetailFromApp(tenantId, propertyId) {
+  state.contextPropertyId = propertyId;
+  openTenantDetail(tenantId);
+}
+
+function deleteListing(id) {
+  if (!confirm('Delete this listing? Applications will also be removed.')) return;
+  state.properties = state.properties.filter(p => p.id !== id);
+  state.applications = state.applications.filter(a => a.propertyId !== id);
+  persistProperties();
+  persistApplications();
+  showToast('Listing deleted');
+  state.tab = 'listings';
+  renderRoleShell();
+}
+
+/* === New listing modal =================================== */
+function openListing() { $('#listingModal').classList.add('show'); }
+function closeListing() { $('#listingModal').classList.remove('show'); }
+
+function submitListing(e) {
+  e.preventDefault();
+  const f = e.target;
+  const data = Object.fromEntries(new FormData(f).entries());
+  const newProp = {
+    id: 'p_' + Date.now(),
+    landlordId: state.activeLandlordId,
+    address: data.address,
+    city: data.city,
+    propertyType: data.propertyType,
+    bedrooms: Number(data.bedrooms),
+    rent: Number(data.rent),
+    minScore: Number(data.minScore),
+    description: data.description || `${data.bedrooms}-bed ${data.propertyType.toLowerCase()} in ${data.city}.`,
+    photoTag: data.photoTag,
+    createdAt: Date.now(),
+  };
+  state.properties.unshift(newProp);
+  persistProperties();
+  closeListing();
+  f.reset();
+  showToast('Listing published!');
+  state.tab = 'listings';
+  renderRoleShell();
+}
+
+/* ========================================================= */
+/* LANDLORD — APPLICANTS TAB (across all listings)            */
+/* ========================================================= */
+function renderApplicantsTab() {
+  const myProps = state.properties.filter(p => p.landlordId === state.activeLandlordId);
+  const propIds = new Set(myProps.map(p => p.id));
+  const apps = state.applications
+    .filter(a => propIds.has(a.propertyId))
+    .map(a => ({ app:a, tenant:getTenant(a.tenantId), property:getProperty(a.propertyId) }))
+    .filter(x => x.tenant && x.property)
+    .sort((a,b) => b.tenant.creditScore - a.tenant.creditScore);
+
+  return `
+    <div class="page-head"><div><h2>All applicants</h2><p>${apps.length} application${apps.length===1?'':'s'} across your listings, ranked by credit score.</p></div></div>
+    ${apps.length === 0 ? `
+      <div class="empty-state">
+        <h4>No applicants yet</h4>
+        <p style="margin: 4px 0 14px;">Once tenants apply to your listings, they'll appear here.</p>
+        <button class="btn btn-primary" onclick="state.tab='listings'; renderRoleShell()">View listings</button>
+      </div>
+    ` : `
+      <div class="card">
+        ${apps.map(({app, tenant, property}) => {
+          const fetched = state.fetchedCredit.has(tenant.id);
+          const qualifies = tenant.creditScore >= property.minScore;
+          const rowClass = !fetched ? 'locked-score' : (qualifies ? 'qualifies' : 'does-not');
+          return `
+            <div class="applicant-row ${rowClass}" onclick="openTenantDetailFromApp('${tenant.id}','${property.id}')">
+              <div class="avatar" style="background:${tenant.color}">${initials(tenant.name)}</div>
+              <div class="info">
+                <div class="name">${escapeHtml(tenant.name)} ${tenant.isNew?'<span style="font-size:10px; background:var(--accent); color:#fff; padding:1px 6px; border-radius:999px; margin-left:4px;">NEW</span>':''}</div>
+                <div class="sub">${escapeHtml(tenant.occupation)} · Applied for ${escapeHtml(property.address)} · ${timeAgo(app.createdAt)}</div>
+                <div style="margin-top:4px;"><span class="status-pill ${app.status}">${app.status}</span></div>
+              </div>
+              <div class="score-block">
+                ${fetched ? `
+                  <div class="v" style="color:${scoreBand(tenant.creditScore).color}">${tenant.creditScore}</div>
+                  <div class="l">${qualifies ? '✓ Qualifies' : '✗ Below ' + property.minScore}</div>
+                ` : `
+                  <div class="v" style="color:var(--ink-mute); font-size:14px;">🔒</div>
+                  <div class="l">Fetch to view</div>
+                `}
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `}
+  `;
+}
+
+/* ========================================================= */
+/* LANDLORD — FIND TENANTS (directory)                        */
+/* ========================================================= */
+function renderTenantDirectory() {
+  const q = state.search.trim().toLowerCase();
+  let list = state.tenants;
+  if (q) list = list.filter(t => (t.name + ' ' + t.city + ' ' + t.occupation).toLowerCase().includes(q));
+  return `
+    <div class="page-head">
+      <div><h2>Find tenants</h2><p>Browse verified tenants and run credit checks on demand.</p></div>
+    </div>
+    <div class="filter-row">
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" placeholder="Search by name, city, or occupation" oninput="state.search=this.value; renderTab()" value="${escapeHtml(state.search)}"/>
+      </div>
+    </div>
+    ${list.length === 0 ? `<div class="empty"><h3>No tenants</h3></div>` : `
+      <div class="tenant-grid">
+        ${list.map(t => renderTenantDirectoryCard(t)).join('')}
+      </div>
+    `}
+  `;
+}
+
+function renderTenantDirectoryCard(t) {
+  const fetched = state.fetchedCredit.has(t.id);
+  const b = scoreBand(t.creditScore);
+  return `
+    <div class="tenant-card ${t.isNew ? 'new' : ''}" onclick="openTenantDetail('${t.id}')">
+      <div class="tenant-top">
+        <div class="avatar" style="background:${t.color}">${initials(t.name)}</div>
+        <div>
+          <div class="tenant-name">${escapeHtml(t.name)}</div>
+          <div class="tenant-meta">${escapeHtml(t.occupation)} · ${escapeHtml(t.city)}</div>
+        </div>
+      </div>
+      ${fetched ? `
+        <div class="credit-status fetched">
+          <div>
+            <div class="score-label">Credit Score</div>
+            <div class="score-value" style="color:${b.color}">${t.creditScore}</div>
+          </div>
+          <span class="score-tag ${b.cls}">${b.label}</span>
+        </div>
+      ` : `
+        <div class="credit-status locked">
+          <span class="label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Credit score not fetched
+          </span>
+          <span style="font-size:11px; color:var(--ink-mute)">Open to fetch</span>
+        </div>
+      `}
+      <div class="tenant-facts">
+        <span>💼 $${t.income.toLocaleString()}/mo</span>
+        <span>📍 ${escapeHtml(t.city.split(',')[0])}</span>
+      </div>
+    </div>
+  `;
+}
+
+/* === Tenant detail (landlord view) ======================= */
+function openTenantDetail(id) {
+  state.screen = 'tenant-detail';
+  const t = getTenant(id);
+  if (!t) return;
+  const fetched = state.fetchedCredit.has(id);
+  // If we came from a property, show that context
+  const ctxProp = state.contextPropertyId ? getProperty(state.contextPropertyId) : null;
+  const application = ctxProp && state.applications.find(a => a.tenantId === id && a.propertyId === ctxProp.id);
+
+  $('#main').innerHTML = `
+    <section class="screen">
+      <button class="back-btn" onclick="${ctxProp ? `openListingDetail('${ctxProp.id}')` : `renderRoleShell()`}">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Back
+      </button>
+
+      ${ctxProp ? `
+        <div class="card" style="margin-bottom:14px; padding:14px;">
+          <div style="font-size:12px; color:var(--ink-mute); text-transform:uppercase; letter-spacing:.04em;">Application for</div>
+          <div style="font-weight:600; margin-top:2px;">${escapeHtml(ctxProp.address)} · $${ctxProp.rent.toLocaleString()}/mo · Min credit ${ctxProp.minScore}</div>
+          ${application ? `
+            <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+              ${application.status === 'pending' ? `
+                <button class="btn btn-primary btn-sm" onclick="updateAppStatus('${application.id}','accepted')">Accept application</button>
+                <button class="btn btn-danger-ghost btn-sm" onclick="updateAppStatus('${application.id}','rejected')">Decline</button>
+              ` : `
+                <span class="status-pill ${application.status}">${application.status}</span>
+                <button class="btn btn-ghost btn-sm" onclick="updateAppStatus('${application.id}','pending')">Reset to pending</button>
+              `}
+            </div>
+          ` : ''}
+        </div>
+      ` : ''}
+
+      <div class="detail-grid">
+        <div>
+          <div class="card">
+            <div class="profile-head">
+              <div class="avatar" style="background:${t.color}">${initials(t.name)}</div>
+              <div>
+                <h3>${escapeHtml(t.name)}</h3>
+                <div class="meta">${escapeHtml(t.occupation)} at ${escapeHtml(t.employer)} · ${escapeHtml(t.city)}</div>
+              </div>
+            </div>
+            <dl class="data-list">
+              <div><dt>Age</dt><dd>${t.age}</dd></div>
+              <div><dt>Monthly income</dt><dd>$${t.income.toLocaleString()}</dd></div>
+              <div><dt>Phone</dt><dd>${escapeHtml(t.phone)}</dd></div>
+              <div><dt>Email</dt><dd>${escapeHtml(t.email)}</dd></div>
+              <div><dt>SSN</dt><dd class="ssn-mask">${escapeHtml(t.ssn)}</dd></div>
+              <div><dt>Verification</dt><dd style="color:var(--good)">✓ ID, Income, Employment</dd></div>
+            </dl>
+            <div class="detail-actions">
+              <button class="btn btn-primary" onclick="openChatWith('tenant','${t.id}')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Message tenant
+              </button>
+              <button class="btn btn-ghost" onclick="showToast('Saved to shortlist')">★ Shortlist</button>
+            </div>
+          </div>
+
+          <div class="card" id="historyCard" ${fetched ? '' : 'style="opacity:.55"'}>
+            <h4 class="section">Payment history</h4>
+            <p class="section-sub">${fetched ? 'Last 6 months across verified rentals' : 'Available after fetching credit report'}</p>
+            <div id="historyList">
+              ${fetched ? renderHistoryList(t) : `
+                <div style="text-align:center; padding: 20px 10px; color: var(--ink-mute);">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  <p style="margin: 8px 0 0; font-size: 13px;">Fetch credit report to unlock history →</p>
+                </div>
+              `}
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" id="creditCard">
+            ${fetched ? renderCreditReport(t) : renderCreditPanelLocked(t)}
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+  // clear the context for next navigation
+  // (keep it so back button works, but clear on full re-render)
+}
+
+function updateAppStatus(appId, status) {
+  const app = state.applications.find(a => a.id === appId);
+  if (!app) return;
+  app.status = status;
+  persistApplications();
+  showToast(`Application ${status}`);
+  openTenantDetail(app.tenantId);
+}
+
+function renderCreditPanelLocked(t) {
+  return `
+    <div class="credit-panel">
+      <div class="icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <h4>Credit report locked</h4>
+      <p class="sub">Run a soft credit check with ${escapeHtml(t.name.split(' ')[0])}'s consent. This won't affect their score.</p>
+      <button class="btn btn-primary btn-block" onclick="fetchCredit('${t.id}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+        Fetch credit score
+      </button>
+      <p class="field-hint" style="margin-top:12px;">Soft check via Credentia Bureau · No SSN exposed</p>
+    </div>
+  `;
+}
+
+function renderCreditReport(t) {
+  const b = scoreBand(t.creditScore);
+  const pct = Math.max(0, Math.min(1, (t.creditScore - 300) / 550));
+  const angle = -90 + pct * 180;
+  const R = 90, cx = 110, cy = 110;
+  const rad = (a) => a * Math.PI / 180;
+  const nx = cx + R * Math.cos(rad(angle));
+  const ny = cy + R * Math.sin(rad(angle));
+  const hist = HISTORY_BY_BAND[b.cls] || HISTORY_BY_BAND.good;
+  const onTime = hist.filter(h => h.type === 'paid').length;
+
+  return `
+    <h4 class="section" style="display:flex; align-items:center; justify-content:space-between;">
+      Credit report
+      <span style="font-size:11px; color:var(--good); font-weight:500;">✓ Just fetched</span>
+    </h4>
+    <div class="credit-gauge">
+      <svg viewBox="0 0 220 130">
+        <defs>
+          <linearGradient id="gaugeGrad" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stop-color="#B4452B"/><stop offset="40%" stop-color="#C9892E"/>
+            <stop offset="70%" stop-color="#2E7D5B"/><stop offset="100%" stop-color="#0B3D2E"/>
+          </linearGradient>
+        </defs>
+        <path d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="#E4DED1" stroke-width="14" stroke-linecap="round"/>
+        <path d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="url(#gaugeGrad)" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="${(pct * Math.PI * 90).toFixed(1)} 999"/>
+        <circle cx="${nx.toFixed(1)}" cy="${ny.toFixed(1)}" r="7" fill="#fff" stroke="${b.color}" stroke-width="3"/>
+      </svg>
+      <div class="number"><div class="num" style="color:${b.color}">${t.creditScore}</div><div class="lab">${b.label} · 300–850</div></div>
+    </div>
+    <div class="stat-row"><span class="k">On-time payments</span><span class="v">${onTime} / ${hist.length}</span></div>
+    <div class="stat-row"><span class="k">Open credit lines</span><span class="v">${Math.max(1, Math.round(t.creditScore/200))}</span></div>
+    <div class="stat-row"><span class="k">Credit age</span><span class="v">${Math.max(1, Math.round((t.creditScore-600)/50))} yrs</span></div>
+    <div class="stat-row"><span class="k">Report source</span><span class="v" style="font-size:12px; color:var(--ink-mute);">Credentia Bureau</span></div>
+  `;
+}
+
+const HISTORY_BY_BAND = {
+  excellent: [
+    {date:"Apr 2026", type:"paid", note:"Rent — On time"},{date:"Mar 2026", type:"paid", note:"Rent — On time"},
+    {date:"Feb 2026", type:"paid", note:"Rent — On time"},{date:"Jan 2026", type:"paid", note:"Rent — On time"},
+    {date:"Dec 2025", type:"paid", note:"Rent — On time"},{date:"Nov 2025", type:"paid", note:"Rent — On time"},
+  ],
+  good: [
+    {date:"Apr 2026", type:"paid", note:"Rent — On time"},{date:"Mar 2026", type:"paid", note:"Rent — On time"},
+    {date:"Feb 2026", type:"paid", note:"Rent — On time"},{date:"Jan 2026", type:"late", note:"Rent — 3 days late"},
+    {date:"Dec 2025", type:"paid", note:"Rent — On time"},
+  ],
+  fair: [
+    {date:"Apr 2026", type:"paid", note:"Rent — On time"},{date:"Mar 2026", type:"late", note:"Rent — 8 days late"},
+    {date:"Feb 2026", type:"paid", note:"Rent — On time"},{date:"Jan 2026", type:"late", note:"Rent — 5 days late"},
+    {date:"Dec 2025", type:"paid", note:"Rent — On time"},
+  ],
+  poor: [
+    {date:"Apr 2026", type:"late", note:"Rent — 10 days late"},{date:"Mar 2026", type:"miss", note:"Rent — Missed"},
+    {date:"Feb 2026", type:"paid", note:"Rent — On time"},{date:"Jan 2026", type:"late", note:"Rent — 7 days late"},
+    {date:"Dec 2025", type:"miss", note:"Rent — Missed"},
+  ],
+};
+
+function renderHistoryList(t) {
+  const b = scoreBand(t.creditScore);
+  return (HISTORY_BY_BAND[b.cls] || HISTORY_BY_BAND.good).map(h => `
+    <div class="history-item ${h.type}">
+      <div class="left"><span class="dot"></span><span>${escapeHtml(h.note)}</span></div>
+      <div class="right">${escapeHtml(h.date)}</div>
+    </div>
+  `).join('');
+}
+
+async function fetchCredit(tenantId) {
+  const t = getTenant(tenantId);
+  if (!t) return;
+  const card = $('#creditCard');
+  card.innerHTML = `
+    <div class="credit-panel">
+      <div class="icon-wrap"><div class="spinner" style="width:28px; height:28px; border-width:3px;"></div></div>
+      <h4>Fetching credit report…</h4>
+      <p class="sub">Securely contacting Credentia Bureau</p>
+      <div class="fetch-stages" id="fetchStages">
+        <div class="fetch-stage" data-stage="0"><div class="stage-icon"><div class="spinner"></div></div><span>Authenticating request</span></div>
+        <div class="fetch-stage" data-stage="1"><div class="stage-icon"><div class="spinner"></div></div><span>Verifying identity with bureau</span></div>
+        <div class="fetch-stage" data-stage="2"><div class="stage-icon"><div class="spinner"></div></div><span>Pulling credit report</span></div>
+      </div>
+    </div>
+  `;
+  const stages = $$('#fetchStages .fetch-stage');
+  const setStage = (i, status) => {
+    const el = stages[i]; if (!el) return;
+    if (status === 'active') {
+      el.classList.add('active');
+      el.querySelector('.stage-icon').innerHTML = `<div class="spinner"></div>`;
+    } else if (status === 'done') {
+      el.classList.remove('active'); el.classList.add('done');
+      el.querySelector('.stage-icon').innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>`;
+    }
+  };
+  setStage(0, 'active'); await new Promise(r => setTimeout(r, 700));
+  setStage(0, 'done'); setStage(1, 'active'); await new Promise(r => setTimeout(r, 900));
+  setStage(1, 'done'); setStage(2, 'active'); await new Promise(r => setTimeout(r, 1100));
+  setStage(2, 'done'); await new Promise(r => setTimeout(r, 350));
+
+  state.fetchedCredit.add(tenantId);
+  persistFetched();
+  card.innerHTML = renderCreditReport(t);
+  const histCard = $('#historyCard');
+  if (histCard) {
+    histCard.style.opacity = '1';
+    $('#historyList').innerHTML = renderHistoryList(t);
+    histCard.querySelector('.section-sub').textContent = 'Last 6 months across verified rentals';
+  }
+  showToast(`Credit score: ${t.creditScore} · ${scoreBand(t.creditScore).label}`);
+}
+
+/* ========================================================= */
+/* CHAT                                                       */
+/* ========================================================= */
+function threadKey(otherType, otherId) {
+  // Different keys for tenant→landlord vs landlord→tenant so threads don't bleed
+  return `${state.role}:${otherType}:${otherId}`;
+}
+
+function openChatWith(otherType, otherId) {
+  state.tab = 'messages';
+  state.chatPeer = { type: otherType, id: otherId };
+  const key = threadKey(otherType, otherId);
+  if (!state.threads[key] || !state.threads[key].length) {
+    const greeting = state.role === 'tenant'
+      ? "Hi! Thanks for getting in touch about the property."
+      : "Hi! Thanks for considering my application. Happy to answer any questions.";
+    state.threads[key] = [{ from:'them', text: greeting, ts: Date.now()-60000 }];
+    persistThreads();
+  }
+  renderRoleShell();
+}
+
+function renderMessages() {
+  // Find candidates depending on role
+  let candidates = [];
+  if (state.role === 'tenant') {
+    candidates = LANDLORDS.map(l => ({ type:'landlord', id:l.id, name:l.name, sub:l.company, color:l.avatar }));
+  } else {
+    candidates = state.tenants.map(t => ({ type:'tenant', id:t.id, name:t.name, sub:t.occupation, color:t.color }));
+  }
+  if (!state.chatPeer) {
+    // pick the first candidate, or someone with existing thread
+    const withThreads = candidates.filter(c => state.threads[threadKey(c.type, c.id)]?.length);
+    state.chatPeer = (withThreads[0] || candidates[0]) ? { type: (withThreads[0]||candidates[0]).type, id: (withThreads[0]||candidates[0]).id } : null;
+  }
+  if (!state.chatPeer) {
+    $('#tabContent').innerHTML = `<div class="empty-state"><h4>No conversations yet</h4></div>`;
+    return;
+  }
+  const peer = candidates.find(c => c.id === state.chatPeer.id);
+  if (!peer) {
+    $('#tabContent').innerHTML = `<div class="empty-state"><h4>Person not found</h4></div>`;
+    return;
+  }
+
+  $('#tabContent').innerHTML = `
+    <div class="chat-page">
+      <aside class="chat-sidebar">
+        <h4>Conversations</h4>
+        ${candidates.map(c => {
+          const k = threadKey(c.type, c.id);
+          const last = state.threads[k]?.slice(-1)[0]?.text || 'Start a conversation';
+          return `
+            <div class="chat-thread ${c.id===state.chatPeer.id?'active':''}" onclick="openChatWith('${c.type}','${c.id}')">
+              <div class="avatar sm" style="background:${c.color}">${initials(c.name)}</div>
+              <div class="info">
+                <div class="name">${escapeHtml(c.name)}</div>
+                <div class="preview">${escapeHtml(last)}</div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </aside>
+      <div class="chat-main">
+        <div class="chat-head">
+          <div class="avatar" style="background:${peer.color}">${initials(peer.name)}</div>
+          <div style="flex:1">
+            <div class="name">${escapeHtml(peer.name)}</div>
+            <div class="status">Online now</div>
+          </div>
+          <div class="role-pill"><span class="dot"></span>Verified</div>
+        </div>
+        <div class="chat-body" id="chatBody"></div>
+        <div class="quick-replies">
+          <button onclick="quickSend('${state.role==='tenant'?'Is the property still available?':'When could you move in?'}')">${state.role==='tenant'?'Still available?':'When could you move in?'}</button>
+          <button onclick="quickSend('Could we arrange a viewing?')">Viewing?</button>
+          <button onclick="quickSend('What is your earliest move-in date?')">Move-in date?</button>
+        </div>
+        <form class="chat-input" onsubmit="return sendMessage(event)">
+          <input id="chatInput" type="text" placeholder="Type a message..." autocomplete="off"/>
+          <button type="submit" aria-label="Send">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+  `;
+  paintMessages();
+}
+
+function paintMessages() {
+  const key = threadKey(state.chatPeer.type, state.chatPeer.id);
+  const body = $('#chatBody');
+  const msgs = state.threads[key] || [];
+  body.innerHTML = msgs.map(m => `
+    <div class="msg ${m.from==='me'?'me':'them'}">
+      ${escapeHtml(m.text)}
+      <span class="ts">${new Date(m.ts).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+    </div>
+  `).join('');
+  body.scrollTop = body.scrollHeight;
+}
+
+function sendMessage(e) {
+  e.preventDefault();
+  const input = $('#chatInput');
+  const text = input.value.trim();
+  if (!text) return false;
+  const key = threadKey(state.chatPeer.type, state.chatPeer.id);
+  state.threads[key] = state.threads[key] || [];
+  state.threads[key].push({ from:'me', text, ts: Date.now() });
+  persistThreads();
+  input.value = '';
+  paintMessages();
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    const reply = SCRIPTED_REPLIES[Math.floor(Math.random()*SCRIPTED_REPLIES.length)];
+    state.threads[key].push({ from:'them', text: reply, ts: Date.now() });
+    persistThreads();
+    paintMessages();
+  }, 900 + Math.random()*800);
+  return false;
+}
+
+function quickSend(text) {
+  $('#chatInput').value = text;
+  $('.chat-input').dispatchEvent(new Event('submit', { cancelable: true }));
+}
+function showTyping() {
+  const body = $('#chatBody');
+  const el = document.createElement('div');
+  el.className = 'typing'; el.id = 'typingEl';
+  el.innerHTML = '<span></span><span></span><span></span>';
+  body.appendChild(el);
+  body.scrollTop = body.scrollHeight;
+}
+function removeTyping() { const e = $('#typingEl'); if (e) e.remove(); }
+
+/* ========================================================= */
+/* FEEDBACK                                                   */
+/* ========================================================= */
+function openFeedback() { $('#feedbackModal').classList.add('show'); }
+function closeFeedback() { $('#feedbackModal').classList.remove('show'); }
+
+$('#starRow').addEventListener('click', (e) => {
+  const b = e.target.closest('.star'); if (!b) return;
+  state.fb.stars = Number(b.dataset.v);
+  $$('#starRow .star').forEach((s,i) => s.classList.toggle('active', i < state.fb.stars));
+});
+$('#pillGroup').addEventListener('click', (e) => {
+  const p = e.target.closest('.pill'); if (!p) return;
+  const t = p.dataset.tag;
+  if (state.fb.tags.has(t)) { state.fb.tags.delete(t); p.classList.remove('selected'); }
+  else { state.fb.tags.add(t); p.classList.add('selected'); }
+});
+
+async function submitFeedback() {
+  const btn = $('#fbSubmit');
+  const payload = {
+    rating: state.fb.stars,
+    tags: Array.from(state.fb.tags).join(', '),
+    comment: $('#fbText').value.trim(),
+    email: $('#fbEmail').value.trim(),
+    role: state.role || 'unknown',
+    screen: state.screen + (state.tab ? '/' + state.tab : ''),
+    userAgent: navigator.userAgent,
+    timestamp: new Date().toISOString(),
+  };
+  if (!payload.rating && !payload.comment && !payload.tags) {
+    showToast('Please add a rating or comment first'); return;
+  }
+  btn.disabled = true; btn.textContent = 'Sending...';
+  let ok = false;
+  if (FEEDBACK_ENDPOINT) {
+    try {
+      await fetch(FEEDBACK_ENDPOINT, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(payload).toString(),
+      });
+      ok = true;
+    } catch (err) { console.warn('Feedback POST failed', err); }
+  }
+  const prior = JSON.parse(localStorage.getItem('credentia.feedback') || '[]');
+  prior.push(payload);
+  localStorage.setItem('credentia.feedback', JSON.stringify(prior));
+  btn.disabled = false; btn.textContent = 'Send feedback';
+  closeFeedback();
+  state.fb.stars = 0; state.fb.tags.clear();
+  $$('#starRow .star').forEach(s => s.classList.remove('active'));
+  $$('#pillGroup .pill').forEach(p => p.classList.remove('selected'));
+  $('#fbText').value = ''; $('#fbEmail').value = '';
+  showToast(ok ? 'Thank you! Feedback sent.' : (FEEDBACK_ENDPOINT ? 'Saved offline — will sync later' : 'Thanks! Saved locally.'));
+}
+</script>
+
+</body>
+</html>
